@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Broadcast — Padmavathi Traders Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .broadcast-grid { display:grid; grid-template-columns:1fr 360px; gap:20px; }
+    .placeholder-btns { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+    .wa-preview-wrap { background:#e5ddd5; border-radius:12px; padding:16px; }
+    .wa-bubble-msg { background:#dcf8c6; border-radius:8px 8px 0 8px; padding:12px 14px; font-size:14px; line-height:1.6; white-space:pre-wrap; word-break:break-word; max-width:280px; }
+    .char-count { font-size:12px; color:var(--text-muted); text-align:right; margin-top:4px; }
+    .segment-radio { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+    .segment-option { display:flex; align-items:center; gap:10px; padding:10px 14px; border:1.5px solid var(--border); border-radius:var(--radius-sm); cursor:pointer; transition:all .15s; }
+    .segment-option:has(input:checked) { border-color:var(--green-mid); background:var(--green-light); }
+    .segment-option input[type=radio] { accent-color:var(--green-mid); }
+    .recipient-row { display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid var(--border-light); }
+    .recipient-row:last-child { border-bottom:none; }
+  </style>
+</head>
+<body>
+<script src="/js/data.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/components.js"></script>
+<script>
+injectAdminShell('/admin/broadcast');
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('admin-page-title').textContent = 'WhatsApp Broadcast';
+
+  const DEFAULT_MSG = `Hi {name},\n\nWe have exciting new stationery deals at Padmavathi Traders! Check out our latest offers and place your order today.\n\nShop Now: padmavathitraders.com\n\nRegards,\nPadmavathi Traders`;
+
+  const PLACEHOLDERS = ['{name}','{quote_id}','{store_name}','{phone}','{order_id}'];
+
+  const verifiedCustomers = NM_DATA.customers.filter(c => c.otpVerified).slice(0, 8);
+  const segments = [
+    { key:'all', label:'All Verified Customers', count: NM_DATA.customers.filter(c=>c.otpVerified).length },
+    { key:'active', label:'Active (Last 30 Days)', count: 8 },
+    { key:'business', label:'Business & Institution', count: NM_DATA.customers.filter(c=>c.type==='Business').length },
+    { key:'personal', label:'Personal Customers', count: NM_DATA.customers.filter(c=>c.type==='Personal').length }
+  ];
+
+  function initials(name) { return name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
+
+  function previewMsg(msg, name) {
+    return msg.replace(/{name}/g, name || 'Customer')
+              .replace(/{store_name}/g, 'Padmavathi Traders')
+              .replace(/{quote_id}/g, 'QT-2026-011')
+              .replace(/{order_id}/g, 'ORD-2026-001')
+              .replace(/{phone}/g, '+91 40 2461 1234');
+  }
+
+  document.getElementById('main-content').innerHTML = `
+    <div class="broadcast-grid">
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><span class="card-title">👥 Audience Segment</span></div>
+          <div class="card-body">
+            <div class="segment-radio" id="segment-radios">
+              ${segments.map((s,i) => `
+                <label class="segment-option">
+                  <input type="radio" name="segment" value="${s.key}" ${i===0?'checked':''}>
+                  <div style="flex:1">
+                    <div style="font-weight:600;font-size:14px">${s.label}</div>
+                  </div>
+                  <span class="badge badge-gray">${s.count}</span>
+                </label>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">✍️ Compose Message</span></div>
+          <div class="card-body">
+            <div style="margin-bottom:10px">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Insert Placeholder</div>
+              <div class="placeholder-btns">
+                ${PLACEHOLDERS.map(p => `<button class="btn btn-ghost btn-sm placeholder-btn" data-ph="${p}">${p}</button>`).join('')}
+              </div>
+            </div>
+            <textarea class="form-control" id="msg-textarea" rows="8" style="font-size:14px">${DEFAULT_MSG}</textarea>
+            <div class="char-count" id="char-count">${DEFAULT_MSG.length} characters</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header"><span class="card-title">📱 WhatsApp Preview</span></div>
+          <div class="card-body">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Previewing as: <strong>Ravi Kumar</strong></div>
+            <div class="wa-preview-wrap">
+              <div class="wa-bubble-msg" id="wa-preview-bubble"></div>
+              <div style="font-size:11px;color:#667781;text-align:right;margin-top:4px">Now ✓✓</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">📋 Recipients</span></div>
+          <div id="recipients-list">
+            ${verifiedCustomers.map(c => `
+              <div class="recipient-row">
+                <div class="avatar" style="width:32px;height:32px;font-size:12px">${initials(c.name)}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
+                  <div style="font-size:11px;color:var(--text-muted)">${c.phone}</div>
+                </div>
+                <button class="btn btn-ghost btn-sm send-wa-btn" data-phone="${c.phone}" data-name="${c.name.split(' ')[0]}">💬</button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  function updatePreview() {
+    const msg = document.getElementById('msg-textarea').value;
+    document.getElementById('wa-preview-bubble').textContent = previewMsg(msg, 'Ravi Kumar');
+    document.getElementById('char-count').textContent = msg.length + ' characters';
+  }
+
+  updatePreview();
+
+  document.getElementById('msg-textarea').addEventListener('input', updatePreview);
+
+  document.querySelectorAll('.placeholder-btn').forEach(btn => btn.addEventListener('click', () => {
+    const ta = document.getElementById('msg-textarea');
+    const ph = btn.dataset.ph;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    ta.value = ta.value.substring(0, start) + ph + ta.value.substring(end);
+    ta.selectionStart = ta.selectionEnd = start + ph.length;
+    ta.focus();
+    updatePreview();
+  }));
+
+  document.querySelectorAll('.send-wa-btn').forEach(btn => btn.addEventListener('click', () => {
+    const msg = document.getElementById('msg-textarea').value;
+    const phone = btn.dataset.phone.replace(/[^0-9]/g,'');
+    const name = btn.dataset.name;
+    const fullPhone = phone.startsWith('91') ? phone : '91' + phone;
+    window.open('https://wa.me/' + fullPhone + '?text=' + encodeURIComponent(previewMsg(msg, name)), '_blank');
+  }));
+});
+</script>
+</body>
+</html>

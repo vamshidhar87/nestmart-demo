@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Fulfilment — Padmavathi Traders Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .detail-grid { display:grid; grid-template-columns:1fr 360px; gap:20px; margin-top:20px; }
+    .info-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border-light); font-size:14px; }
+    .info-row:last-child { border-bottom:none; }
+    .dispatched-box { background:var(--green-light); border:1.5px solid var(--green-mid); border-radius:var(--radius-card); padding:16px 20px; margin-top:16px; display:none; }
+  </style>
+</head>
+<body>
+<script src="/js/data.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/components.js"></script>
+<script>
+injectAdminShell('/admin/orders');
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('admin-page-title').textContent = 'Order Fulfilment';
+  const order = NM_DATA.orders[0];
+
+  function fmtDate(d) { return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'}); }
+
+  let dispatched = false;
+
+  function render() {
+    document.getElementById('main-content').innerHTML = `
+      <a href="/admin/orders.html" style="display:inline-flex;align-items:center;gap:6px;color:var(--text-muted);font-size:14px;margin-bottom:16px">← Back to Orders</a>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Order ID</div>
+            <div style="font-family:var(--font-heading);font-size:20px;font-weight:700;color:var(--text-dark)">${order.id}</div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Customer</div>
+            <div style="font-weight:600">${order.customerName}</div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Quote Ref</div>
+            <div style="color:var(--green-dark);font-weight:600">${order.quoteRef}</div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Order Date</div>
+            <div>${fmtDate(order.date)}</div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Total</div>
+            <div style="font-family:var(--font-heading);font-size:18px;font-weight:700;color:var(--green-dark)">${NM.fmt(order.total)}</div>
+          </div>
+          <div>
+            <span class="badge badge-amber" id="status-badge">${dispatched?'<span class="badge badge-blue">Dispatched</span>':order.status}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header"><span class="card-title">📦 Order Items</span></div>
+            <div class="table-wrap">
+              <table class="table">
+                <thead><tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Line Total</th></tr></thead>
+                <tbody>
+                  ${order.items.map(item => `
+                    <tr>
+                      <td style="font-weight:600">${item.name}</td>
+                      <td>${item.qty}</td>
+                      <td>${NM.fmt(item.price)}</td>
+                      <td style="font-weight:700;color:var(--green-dark)">${NM.fmt(item.qty * item.price)}</td>
+                    </tr>
+                  `).join('')}
+                  <tr style="background:#f8fafc">
+                    <td colspan="3" style="text-align:right;font-weight:700">Order Total</td>
+                    <td style="font-weight:700;color:var(--green-dark);font-size:16px">${NM.fmt(order.total)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><span class="card-title">📍 Delivery Address</span></div>
+            <div class="card-body">
+              <p style="font-size:15px;color:var(--text-dark);line-height:1.6">${order.address}</p>
+              <div style="margin-top:12px;display:flex;gap:8px">
+                <a href="https://maps.google.com/?q=${encodeURIComponent(order.address)}" target="_blank" class="btn btn-ghost btn-sm">🗺️ Open in Maps</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header"><span class="card-title">🚚 Dispatch Details</span></div>
+            <div class="card-body">
+              ${dispatched ? `
+                <div class="dispatched-box" style="display:block">
+                  <div style="font-weight:700;color:var(--green-dark);margin-bottom:8px">✓ Order Dispatched</div>
+                  <div style="font-size:13px">Courier: <strong id="show-courier"></strong></div>
+                  <div style="font-size:13px;margin-top:4px">Tracking: <strong id="show-tracking"></strong></div>
+                </div>
+              ` : `
+                <div class="form-group">
+                  <label class="form-label">Courier Name</label>
+                  <input type="text" class="form-control" id="courier-input" placeholder="e.g. Delhivery, BlueDart, DTDC">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Tracking Number</label>
+                  <input type="text" class="form-control" id="tracking-input" placeholder="e.g. DLV9934451234">
+                </div>
+                <button class="btn btn-primary btn-full" id="dispatch-btn">✓ Mark as Dispatched</button>
+                <div class="dispatched-box" id="dispatched-box">
+                  <div style="font-weight:700;color:var(--green-dark);margin-bottom:6px">✓ Order Dispatched</div>
+                  <div style="font-size:13px" id="show-courier-text"></div>
+                  <div style="font-size:13px;margin-top:2px" id="show-tracking-text"></div>
+                </div>
+              `}
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><span class="card-title">💬 Share Delivery</span></div>
+            <div class="card-body">
+              <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Send delivery update to customer via WhatsApp.</p>
+              <button class="btn btn-outline btn-full" onclick="window.open('https://wa.me/919876543210?text='+encodeURIComponent('Dear '+${JSON.stringify(order.customerName)}+', your order ${order.id} has been dispatched. Estimated delivery: 2-3 business days. Thank you for shopping with Padmavathi Traders!'), '_blank')">
+                💬 Send WhatsApp Update
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    const dispatchBtn = document.getElementById('dispatch-btn');
+    if (dispatchBtn) {
+      dispatchBtn.addEventListener('click', () => {
+        const courier = document.getElementById('courier-input').value || 'Delhivery';
+        const tracking = document.getElementById('tracking-input').value || 'DLV' + Math.random().toString(36).substr(2,8).toUpperCase();
+        document.getElementById('dispatched-box').style.display = 'block';
+        document.getElementById('show-courier-text').textContent = 'Courier: ' + courier;
+        document.getElementById('show-tracking-text').textContent = 'Tracking: ' + tracking;
+        document.getElementById('courier-input').disabled = true;
+        document.getElementById('tracking-input').disabled = true;
+        dispatchBtn.disabled = true;
+        dispatchBtn.textContent = '✓ Dispatched';
+        dispatchBtn.style.background = 'var(--green-dark)';
+        document.getElementById('status-badge').innerHTML = '<span class="badge badge-blue">Dispatched</span>';
+        showToast('Order marked as dispatched!');
+      });
+    }
+  }
+
+  render();
+});
+</script>
+</body>
+</html>

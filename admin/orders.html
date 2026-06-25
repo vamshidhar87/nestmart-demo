@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders — Padmavathi Traders Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<script src="/js/data.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/components.js"></script>
+<script>
+injectAdminShell('/admin/orders');
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('admin-page-title').textContent = 'Orders';
+
+  let activeFilter = 'all';
+  let searchQuery = '';
+
+  const STATUS = {
+    in_process: { label:'Ready to dispatch', c:'#92400e', bg:'#fffbeb', bd:'#fde68a', group:'in_process' },
+    dispatched:  { label:'Dispatched',        c:'#1e40af', bg:'#eff6ff', bd:'#bfdbfe', group:'dispatched' },
+    delivered:   { label:'Delivered',         c:'#166534', bg:'#f0fdf4', bd:'#cdeede', group:'delivered' },
+  };
+
+  const DATA = [
+    { id:'ORD-1052', name:'Aarav Mehta',  org:'Bright Future School',   initials:'AM', avBg:'#1f6b4d', quote:'QT-2035', total:'₹9,234',  status:'in_process', date:'11 Jun 2026' },
+    { id:'ORD-1051', name:'Dev Patel',    org:'Patel & Sons Traders',   initials:'DP', avBg:'#1f6b4d', quote:'QT-2027', total:'₹18,900', status:'dispatched',  date:'10 Jun 2026' },
+    { id:'ORD-1049', name:'Kabir Shah',   org:'Shah Stationers',        initials:'KS', avBg:'#ea580c', quote:'QT-2019', total:'₹74,600', status:'delivered',   date:'8 Jun 2026' },
+    { id:'ORD-1048', name:'Priya Nair',   org:'Freelance artist',       initials:'PN', avBg:'#db2777', quote:'QT-2016', total:'₹4,820',  status:'delivered',   date:'7 Jun 2026' },
+    { id:'ORD-1047', name:'Meera Iyer',   org:"St. Anne's College",     initials:'MI', avBg:'#7c3aed', quote:'QT-2012', total:'₹11,200', status:'dispatched',  date:'6 Jun 2026' },
+    { id:'ORD-1045', name:'Sara Khan',    org:'Little Stars Preschool', initials:'SK', avBg:'#2563eb', quote:'QT-2008', total:'₹6,150',  status:'in_process', date:'5 Jun 2026' },
+    { id:'ORD-1044', name:'Rahul Verma',  org:'Verma Architects',       initials:'RV', avBg:'#0891b2', quote:'QT-2005', total:'₹23,410', status:'delivered',   date:'4 Jun 2026' },
+  ];
+
+  const FILTER_DEFS = [
+    ['all','All'],['in_process','Ready to dispatch'],['dispatched','Dispatched'],['delivered','Delivered']
+  ];
+
+  function getCounts() {
+    const c = { all:DATA.length, in_process:0, dispatched:0, delivered:0 };
+    DATA.forEach(d => c[d.status]++);
+    return c;
+  }
+
+  function filtered() {
+    return DATA.filter(d => {
+      const matchFilter = activeFilter === 'all' || d.status === activeFilter;
+      const s = searchQuery.toLowerCase();
+      return matchFilter && (!s || d.id.toLowerCase().includes(s) || d.name.toLowerCase().includes(s) || d.org.toLowerCase().includes(s));
+    });
+  }
+
+  function render() {
+    const c = getCounts();
+    const rows = filtered();
+
+    document.getElementById('main-content').innerHTML = `
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px">
+        <div style="font-size:13px;color:#64748B;margin-top:3px">${DATA.length} orders &middot; ${c.in_process} ready to dispatch</div>
+        <div style="display:flex;align-items:center;gap:9px;border:1px solid #e6eaee;background:#fff;border-radius:10px;padding:8px 12px;min-width:220px">
+          <span style="color:#94A3B8;font-size:14px">&#128269;</span>
+          <input id="o-search" placeholder="Search by order ID, customer&hellip;" value="${searchQuery.replace(/"/g,'&quot;')}"
+            style="border:none;outline:none;font-size:13px;font-family:inherit;background:transparent;color:#1E293B;width:100%">
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+        ${FILTER_DEFS.map(([k, label]) => {
+          const on = activeFilter === k;
+          return `<span data-filter="${k}" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:99px;cursor:pointer;border:1px solid ${on?'#1f6b4d':'#e6eaee'};background:${on?'#1f6b4d':'#fff'};color:${on?'#fff':'#475569'}">
+            ${label} <span style="font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;background:${on?'rgba(255,255,255,.2)':'#f1f5f9'};color:${on?'#fff':'#94A3B8'}">${c[k]}</span>
+          </span>`;
+        }).join('')}
+      </div>
+
+      <div style="background:#fff;border:1px solid #eef1f4;border-radius:16px;overflow:hidden">
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:740px">
+            <thead>
+              <tr style="background:#f8fafc">
+                <th style="text-align:left;padding:12px 18px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Order</th>
+                <th style="text-align:left;padding:12px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Customer</th>
+                <th style="text-align:left;padding:12px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">From quote</th>
+                <th style="text-align:right;padding:12px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Total</th>
+                <th style="text-align:left;padding:12px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Status</th>
+                <th style="padding:12px 18px;border-bottom:1px solid #eef1f4"></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map(o => {
+                const st = STATUS[o.status];
+                const ready = o.status === 'in_process';
+                const btnStyle = ready
+                  ? 'background:#1f6b4d;color:#fff;border:none'
+                  : 'background:#fff;color:#475569;border:1px solid #e6eaee';
+                return `<tr style="border-bottom:1px solid #f6f8fa">
+                  <td style="padding:13px 18px">
+                    <div style="font-family:\'Bricolage Grotesque\',sans-serif;font-size:14px;font-weight:800;color:#0f172a">${o.id}</div>
+                    <div style="font-size:11px;color:#94A3B8;margin-top:2px">${o.date}</div>
+                  </td>
+                  <td style="padding:13px 14px">
+                    <div style="display:flex;align-items:center;gap:10px">
+                      <div style="width:32px;height:32px;border-radius:50%;background:${o.avBg};color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${o.initials}</div>
+                      <div>
+                        <div style="font-size:13px;font-weight:600;color:#1E293B">${o.name}</div>
+                        <div style="font-size:11px;color:#94A3B8">${o.org}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="padding:13px 14px"><span style="font-size:12px;color:#475569;font-weight:600;font-family:ui-monospace,monospace">${o.quote}</span></td>
+                  <td style="padding:13px 14px;text-align:right;font-family:\'Bricolage Grotesque\',sans-serif;font-size:14px;font-weight:800;color:#1f6b4d">${o.total}</td>
+                  <td style="padding:13px 14px"><span style="display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;color:${st.c};background:${st.bg};border:1px solid ${st.bd}">${st.label}</span></td>
+                  <td style="padding:13px 18px;text-align:right">
+                    <button style="display:inline-block;font-size:12px;font-weight:700;padding:7px 13px;border-radius:9px;cursor:pointer;font-family:inherit;${btnStyle}">${ready ? 'Dispatch &rarr;' : 'View &rarr;'}</button>
+                  </td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-top:1px solid #eef1f4;flex-wrap:wrap;gap:10px">
+          <span style="font-size:12px;color:#94A3B8">Showing ${rows.length} of ${DATA.length} orders</span>
+          <span style="font-size:12px;color:#94A3B8">Orders are created automatically on customer approval &mdash; never added by hand.</span>
+        </div>
+      </div>`;
+
+    document.querySelectorAll('[data-filter]').forEach(el =>
+      el.addEventListener('click', () => { activeFilter = el.dataset.filter; render(); })
+    );
+    const si = document.getElementById('o-search');
+    if (si) si.addEventListener('input', e => { searchQuery = e.target.value; render(); });
+  }
+
+  render();
+});
+</script>
+</body>
+</html>

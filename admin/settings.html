@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings — Padmavathi Traders Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .fld { width:100%;border:1.4px solid #e6eaee;border-radius:10px;padding:10px 12px;font-size:13px;font-family:inherit;color:#1E293B;box-sizing:border-box }
+    .fld:focus { outline:none;border-color:#3BB77E }
+    .lbl { font-size:12px;font-weight:600;color:#475569;margin-bottom:5px }
+    .sw-track { display:inline-flex;align-items:center;padding:2px;border-radius:99px;cursor:pointer;width:34px;height:20px }
+    .sw-knob { width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25) }
+    @keyframes toastUp { from{opacity:0;transform:translate(-50%,12px)} to{opacity:1;transform:translate(-50%,0)} }
+  </style>
+</head>
+<body>
+<script src="/js/data.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/components.js"></script>
+<script>
+injectAdminShell('/admin/settings');
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('admin-page-title').textContent = 'Settings';
+
+  let activeTab = 'fees';
+  let fees = [
+    { name:'GST',              type:'pct',   value:18, enabled:true },
+    { name:'Delivery fee',     type:'fixed', value:50, enabled:true },
+    { name:'Handling fee',     type:'pct',   value:2,  enabled:true },
+    { name:'Convenience fee',  type:'fixed', value:25, enabled:false },
+  ];
+
+  const TEAM = [
+    { name:'Suresh Kumar',  email:'suresh@padmavathitraders.com', initials:'SK', bg:'#ea580c', role:'Superadmin', mfa:true,  last:'2 min ago' },
+    { name:'Ravi Sharma',   email:'ravi@padmavathitraders.com',   initials:'RS', bg:'#1f6b4d', role:'Admin',      mfa:true,  last:'Online now' },
+    { name:'Lakshmi Reddy', email:'lakshmi@padmavathitraders.com',initials:'LR', bg:'#7c3aed', role:'Staff',      mfa:true,  last:'1 hr ago' },
+    { name:'Anil Kumar',    email:'anil@padmavathitraders.com',   initials:'AK', bg:'#0891b2', role:'Staff',      mfa:false, last:'Invited' },
+  ];
+
+  const ROLE_STYLE = {
+    Superadmin: 'color:#6d28d9;background:#f5f3ff;border:1px solid #e9d5ff',
+    Admin:      'color:#1f6b4d;background:#f0fdf4;border:1px solid #cdeede',
+    Staff:      'color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe',
+  };
+
+  function ind(n) {
+    const x = String(Math.round(n));
+    const last3 = x.slice(-3);
+    const rest = x.slice(0, -3);
+    return '₹' + ((rest ? rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' : '') + last3);
+  }
+
+  function showToast(msg) {
+    let t = document.getElementById('settings-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'settings-toast';
+      t.style.cssText = 'position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:12px 22px;border-radius:12px;font-size:13.5px;font-weight:600;z-index:9999;box-shadow:0 12px 30px rgba(0,0,0,.3);animation:toastUp .25s ease;display:flex;align-items:center;gap:9px';
+      document.body.appendChild(t);
+    }
+    t.textContent = '✓ ' + msg;
+    t.style.display = 'flex';
+    clearTimeout(t._tt);
+    t._tt = setTimeout(() => { t.style.display = 'none'; }, 2000);
+  }
+
+  function calcExample() {
+    const sub = 1000;
+    let total = sub;
+    const lines = fees.filter(f => f.enabled).map(f => {
+      const amt = f.type === 'pct' ? sub * f.value / 100 : f.value;
+      total += amt;
+      return { name: `${f.name} (${f.type === 'pct' ? f.value + '%' : 'fixed'})`, amt: ind(amt) };
+    });
+    return { lines, total: ind(total) };
+  }
+
+  function feesHtml() {
+    const ex = calcExample();
+    return `
+      <div style="display:flex;gap:16px;align-items:start;flex-wrap:wrap">
+        <div style="flex:1;min-width:320px;background:#fff;border:1px solid #eef1f4;border-radius:16px;overflow:hidden">
+          <div style="padding:15px 18px;display:flex;align-items:center;justify-content:space-between">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:700;color:#0f172a">Fee types</div>
+            <button onclick="showToast('Fee editor opened')" style="background:#3BB77E;color:#fff;border:none;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">+ Add fee</button>
+          </div>
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead>
+              <tr style="background:#f8fafc">
+                <th style="text-align:left;padding:10px 18px;font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em">Fee</th>
+                <th style="text-align:left;padding:10px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em">Type</th>
+                <th style="text-align:right;padding:10px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em">Value</th>
+                <th style="text-align:center;padding:10px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em">Enabled</th>
+                <th style="padding:10px 18px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${fees.map((f, i) => `
+                <tr style="border-top:1px solid #f6f8fa">
+                  <td style="padding:12px 18px;font-weight:600;color:#1E293B">${f.name}</td>
+                  <td style="padding:12px 12px;color:#64748B">${f.type === 'pct' ? 'Percentage' : 'Fixed'}</td>
+                  <td style="padding:12px 12px;text-align:right;font-weight:700;color:#0f172a;font-family:'Bricolage Grotesque',sans-serif">${f.type === 'pct' ? f.value + '%' : ind(f.value)}</td>
+                  <td style="padding:12px 12px;text-align:center">
+                    <span class="sw-track" data-fee-toggle="${i}" style="background:${f.enabled ? '#3BB77E' : '#cbd5e1'};justify-content:${f.enabled ? 'flex-end' : 'flex-start'}">
+                      <span class="sw-knob"></span>
+                    </span>
+                  </td>
+                  <td style="padding:12px 18px;text-align:right">
+                    <span onclick="showToast('Edit fee: ${f.name}')" style="font-size:12px;font-weight:700;color:#1f6b4d;cursor:pointer;margin-right:10px">Edit</span>
+                    <span style="font-size:12px;color:#94A3B8;cursor:pointer">&#128465;</span>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div style="width:300px;flex-shrink:0;background:#fff;border:1px solid #eef1f4;border-radius:16px;padding:18px">
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#0f172a;margin-bottom:4px">Example calculation</div>
+          <div style="font-size:11.5px;color:#94A3B8;margin-bottom:14px">On a ₹1,000 subtotal with enabled fees</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;margin-bottom:9px">
+            <span style="color:#64748B">Subtotal</span>
+            <span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;color:#1E293B">₹1,000</span>
+          </div>
+          ${ex.lines.map(l => `
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:12.5px;margin-bottom:8px">
+              <span style="color:#64748B">${l.name}</span>
+              <span style="font-weight:700;color:#1E293B">${l.amt}</span>
+            </div>
+          `).join('')}
+          <div style="height:1px;background:#eef1f4;margin:12px 0"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;color:#0f172a">Total</span>
+            <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:800;color:#1f6b4d">${ex.total}</span>
+          </div>
+          <div style="font-size:11px;color:#94A3B8;margin-top:12px;line-height:1.5">Fees are snapshotted onto each quote PDF when it&rsquo;s generated &mdash; changing them here never alters existing quotes.</div>
+        </div>
+      </div>`;
+  }
+
+  function storeHtml() {
+    return `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+        <div style="background:#fff;border:1px solid #eef1f4;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px">
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#0f172a">Store details</div>
+          <div><div class="lbl">Store name</div><input class="fld" value="Padmavathi Traders"></div>
+          <div><div class="lbl">Tagline</div><input class="fld" value="Stationery &amp; Art &middot; Est. 1968"></div>
+          <div><div class="lbl">GSTIN</div><input class="fld" value="36PADMA1968T1Z0" style="font-family:ui-monospace,monospace"></div>
+          <div><div class="lbl">Support phone</div><input class="fld" value="+91 98480 66608"></div>
+          <div style="text-align:right"><button onclick="showToast('Store details saved!')" style="background:#1f6b4d;color:#fff;border:none;border-radius:9px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Save changes</button></div>
+        </div>
+        <div style="background:#fff;border:1px solid #eef1f4;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px">
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#0f172a">Display</div>
+          <div>
+            <div class="lbl">Currency shown to customers</div>
+            <div style="display:flex;gap:8px;margin-top:5px">
+              <span style="font-size:12.5px;font-weight:700;padding:8px 16px;border-radius:9px;cursor:pointer;border:1.4px solid #1f6b4d;background:#f0fdf4;color:#1f6b4d">&#8377; Rupee</span>
+              <span style="font-size:12.5px;font-weight:700;padding:8px 16px;border-radius:9px;cursor:pointer;border:1.4px solid #e6eaee;background:#fff;color:#64748B">$ Dollar</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border:1px solid #eef1f4;border-radius:11px;padding:12px 14px">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#1E293B">Quote-first storefront</div>
+              <div style="font-size:11.5px;color:#94A3B8">No checkout / payment &mdash; orders only after approval</div>
+            </div>
+            <span style="width:34px;height:20px;border-radius:99px;display:inline-flex;align-items:center;padding:2px;background:#3BB77E;justify-content:flex-end;cursor:pointer">
+              <span style="width:16px;height:16px;border-radius:50%;background:#fff"></span>
+            </span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border:1px solid #eef1f4;border-radius:11px;padding:12px 14px">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#1E293B">Show prices to guests</div>
+              <div style="font-size:11.5px;color:#94A3B8">Visitors can see prices before logging in</div>
+            </div>
+            <span style="width:34px;height:20px;border-radius:99px;display:inline-flex;align-items:center;padding:2px;background:#3BB77E;justify-content:flex-end;cursor:pointer">
+              <span style="width:16px;height:16px;border-radius:50%;background:#fff"></span>
+            </span>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function teamHtml() {
+    return `
+      <div style="background:#fff;border:1px solid #eef1f4;border-radius:16px;overflow:hidden">
+        <div style="padding:15px 18px;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:700;color:#0f172a">Team &amp; roles</div>
+            <div style="font-size:11.5px;color:#94A3B8;margin-top:2px">MFA is mandatory for all staff &amp; admin accounts</div>
+          </div>
+          <button onclick="showToast('Invite sent!')" style="background:#3BB77E;color:#fff;border:none;border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">+ Invite member</button>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="background:#f8fafc">
+              <th style="text-align:left;padding:10px 18px;font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em">Member</th>
+              <th style="text-align:left;padding:10px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em">Role</th>
+              <th style="text-align:left;padding:10px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em">MFA</th>
+              <th style="text-align:left;padding:10px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em">Last active</th>
+              <th style="padding:10px 18px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${TEAM.map(u => `
+              <tr style="border-top:1px solid #f6f8fa">
+                <td style="padding:12px 18px">
+                  <div style="display:flex;align-items:center;gap:11px">
+                    <div style="width:34px;height:34px;border-radius:50%;background:${u.bg};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">${u.initials}</div>
+                    <div>
+                      <div style="font-size:13px;font-weight:600;color:#1E293B">${u.name}</div>
+                      <div style="font-size:11px;color:#94A3B8">${u.email}</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="padding:12px 12px"><span style="display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;${ROLE_STYLE[u.role]}">${u.role}</span></td>
+                <td style="padding:12px 12px"><span style="display:inline-block;font-size:11px;font-weight:700;color:${u.mfa?'#166534':'#92400e'}">${u.mfa ? '&#9679; Enabled' : '&#9675; Pending'}</span></td>
+                <td style="padding:12px 12px;color:#64748B">${u.last}</td>
+                <td style="padding:12px 18px;text-align:right"><span onclick="showToast('Manage: ${u.name}')" style="font-size:12px;font-weight:700;color:#1f6b4d;cursor:pointer">Manage</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  function render() {
+    const tabs = [['fees','Fees'],['store','Store'],['team','Team &amp; roles']];
+
+    document.getElementById('main-content').innerHTML = `
+      <div style="font-size:13px;color:#64748B;margin-bottom:16px">Configure fees, store details and who can access the console</div>
+
+      <div style="display:flex;gap:0;border-bottom:1px solid #eef1f4;margin-bottom:18px">
+        ${tabs.map(([k, label]) => {
+          const on = activeTab === k;
+          return `<span data-tab="${k}" style="font-size:13.5px;font-weight:${on?'700':'600'};padding:9px 15px;cursor:pointer;color:${on?'#1f6b4d':'#64748B'};border-bottom:2.5px solid ${on?'#1f6b4d':'transparent'};margin-bottom:-1px">${label}</span>`;
+        }).join('')}
+      </div>
+
+      <div id="tab-content">
+        ${activeTab === 'fees' ? feesHtml() : activeTab === 'store' ? storeHtml() : teamHtml()}
+      </div>`;
+
+    document.querySelectorAll('[data-tab]').forEach(el =>
+      el.addEventListener('click', () => { activeTab = el.dataset.tab; render(); })
+    );
+    document.querySelectorAll('[data-fee-toggle]').forEach(el =>
+      el.addEventListener('click', () => {
+        const i = parseInt(el.dataset.feeToggle);
+        fees[i].enabled = !fees[i].enabled;
+        render();
+        showToast('Fee ' + (fees[i].enabled ? 'enabled' : 'disabled'));
+      })
+    );
+  }
+
+  render();
+});
+</script>
+</body>
+</html>

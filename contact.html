@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About & Contact — Padmavathi Traders</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .about-hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1f6b4d 0%, #15503a 100%);
+      padding: 52px 0;
+      color: #fff;
+    }
+    .about-hero::before {
+      content: '';
+      position: absolute;
+      right: -50px; top: -50px;
+      width: 230px; height: 230px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.05);
+    }
+    .about-hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,.14);
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 5px 13px;
+      border-radius: 99px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: #eafff4;
+      margin-bottom: 16px;
+    }
+    .about-hero-title {
+      font-family: var(--font-heading);
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -.02em;
+      margin-bottom: 14px;
+    }
+    .about-hero-sub {
+      font-size: 15px;
+      color: rgba(255,255,255,.85);
+      line-height: 1.65;
+      max-width: 560px;
+    }
+
+    /* Stats band */
+    .about-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      border-bottom: 1px solid var(--border-light);
+      border-top: 1px solid var(--border-light);
+      margin: 22px 0 0;
+    }
+    .about-stat {
+      padding: 24px 20px;
+      text-align: center;
+      border-right: 1px solid var(--border-light);
+    }
+    .about-stat-value {
+      font-family: var(--font-heading);
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--green-dark);
+      line-height: 1;
+    }
+    .about-stat-label {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+
+    /* Contact section */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      padding: 40px 0;
+    }
+    @media (max-width: 768px) {
+      .about-hero-title { font-size: 26px; }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+    .contact-info-block {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .contact-info-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: var(--green-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .contact-info-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      margin-bottom: 3px;
+    }
+    .contact-info-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+    .contact-info-value a {
+      color: var(--green-dark);
+    }
+
+    /* Map placeholder */
+    .map-placeholder {
+      position: relative;
+      height: 200px;
+      background: #e7eef0;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-top: 20px;
+      border: 1px solid var(--border-light);
+    }
+    .map-placeholder-road-h {
+      position: absolute;
+      left: -10%; width: 120%; height: 12px;
+      background: #fff;
+      transform: rotate(-6deg);
+      box-shadow: 0 0 0 1px #dde5e5;
+    }
+    .map-placeholder-road-v {
+      position: absolute;
+      top: -10%; height: 120%; width: 10px;
+      background: #fff;
+      transform: rotate(5deg);
+      box-shadow: 0 0 0 1px #dde5e5;
+    }
+    .map-pin {
+      position: absolute;
+      left: 50%; top: 50%;
+      font-size: 36px;
+      transform: translate(-50%, -100%);
+      filter: drop-shadow(0 4px 5px rgba(0,0,0,.3));
+    }
+    .map-chip {
+      position: absolute;
+      top: 12px; left: 12px;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 99px;
+      background: rgba(255,255,255,.92);
+      color: var(--green-dark);
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    }
+    .contact-form-card {
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 28px;
+    }
+    .contact-form-card h2 {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-dark);
+    }
+    .contact-form-card p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="/js/data.js"></script>
+  <script src="/js/state.js"></script>
+  <script src="/js/components.js"></script>
+  <script>
+    injectStorefrontShell();
+
+    document.getElementById('main-content').innerHTML = `
+      <!-- Hero -->
+      <div class="about-hero">
+        <div class="container">
+          <div class="about-hero-eyebrow">Serving Hyderabad since 1968 · 57th year</div>
+          <div class="about-hero-title">Four floors of stationery &amp; fine art,<br>run by one family.</div>
+          <p class="about-hero-sub">From a single counter in Narayanguda to one of Hyderabad's most trusted stationery &amp; art-supply houses — serving artists, students, schools, colleges and offices for over five decades.</p>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="container">
+        <div class="about-stats">
+          <div class="about-stat"><div class="about-stat-value">57</div><div class="about-stat-label">Years in business</div></div>
+          <div class="about-stat"><div class="about-stat-value">4</div><div class="about-stat-label">Floors of inventory</div></div>
+          <div class="about-stat"><div class="about-stat-value">1200+</div><div class="about-stat-label">Institutional clients</div></div>
+          <div class="about-stat"><div class="about-stat-value">5000+</div><div class="about-stat-label">Products in stock</div></div>
+        </div>
+      </div>
+
+      <!-- Story -->
+      <div class="container" style="padding:40px 0 0">
+        <div style="font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--green-mid);font-weight:700">Our story</div>
+        <h2 style="font-family:var(--font-heading);font-size:28px;font-weight:800;color:var(--text-dark);margin:8px 0 14px;line-height:1.2;letter-spacing:-.01em">A neighbourhood shop that grew with the city</h2>
+        <p style="font-size:14.5px;color:var(--text-muted);line-height:1.7;max-width:760px;margin-bottom:0">
+          Padmavathi Traders was founded in <strong>1968</strong> by the late <strong>P. Nagender Rao</strong> as a small stationery counter in Narayanguda. More than five decades on, it is still owned and run by the same family — now spanning four floors of pens, paper, office supplies and a dedicated fine-art department, and serving customers from a single schoolchild to institutions ordering by the carton.
+        </p>
+      </div>
+
+      <!-- Contact section -->
+      <div class="container">
+        <div class="contact-grid">
+
+          <!-- Left: contact info + map -->
+          <div>
+            <h2 style="font-family:var(--font-heading);font-size:22px;font-weight:700;color:var(--text-dark);margin-bottom:22px">Get in touch</h2>
+
+            <div class="contact-info-block">
+              <div class="contact-info-icon">📍</div>
+              <div>
+                <div class="contact-info-label">Address</div>
+                <div class="contact-info-value">3-5-1089/11, YMCA Circle<br>Narayanguda, Hyderabad 500029<br>Telangana, India</div>
+              </div>
+            </div>
+
+            <div class="contact-info-block">
+              <div class="contact-info-icon">📞</div>
+              <div>
+                <div class="contact-info-label">Phone / WhatsApp</div>
+                <div class="contact-info-value"><a href="tel:+919848066608">+91 98480 66608</a></div>
+              </div>
+            </div>
+
+            <div class="contact-info-block">
+              <div class="contact-info-icon">✉️</div>
+              <div>
+                <div class="contact-info-label">Email</div>
+                <div class="contact-info-value"><a href="mailto:care@padmavathitraders.com">care@padmavathitraders.com</a></div>
+              </div>
+            </div>
+
+            <div class="contact-info-block">
+              <div class="contact-info-icon">🕐</div>
+              <div>
+                <div class="contact-info-label">Store hours</div>
+                <div class="contact-info-value">Mon – Sat: 9:30 AM – 8:00 PM<br>Sunday: 10:00 AM – 6:00 PM</div>
+              </div>
+            </div>
+
+            <!-- Map placeholder -->
+            <div class="map-placeholder">
+              <div class="map-placeholder-road-h" style="top:45%"></div>
+              <div class="map-placeholder-road-h" style="top:72%"></div>
+              <div class="map-placeholder-road-v" style="left:30%"></div>
+              <div class="map-placeholder-road-v" style="right:18%"></div>
+              <div class="map-pin">📍</div>
+              <div class="map-chip">● YMCA Circle, Narayanguda</div>
+            </div>
+
+            <a href="https://maps.google.com/?q=Padmavathi+Traders+Narayanguda+Hyderabad" target="_blank" rel="noopener"
+               style="display:inline-flex;align-items:center;gap:7px;margin-top:12px;font-size:13px;font-weight:600;color:var(--green-dark)">
+              Open in Google Maps ↗
+            </a>
+          </div>
+
+          <!-- Right: contact form -->
+          <div class="contact-form-card">
+            <h2>Send us a message</h2>
+            <p>For bulk enquiries, quotation requests, or any questions — fill this form and we'll respond within 1 business day.</p>
+            <div id="contact-form-wrap">
+              <form id="contact-form" novalidate>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+                  <div>
+                    <label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px">Your name</label>
+                    <input type="text" id="cf-name" placeholder="Full name" required
+                      style="width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;font-size:13px;font-family:var(--font-body);color:var(--text-dark);outline:none">
+                  </div>
+                  <div>
+                    <label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px">Phone / WhatsApp</label>
+                    <input type="tel" id="cf-phone" placeholder="+91 90000 00000"
+                      style="width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;font-size:13px;font-family:var(--font-body);color:var(--text-dark);outline:none">
+                  </div>
+                </div>
+                <div style="margin-bottom:14px">
+                  <label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px">Email</label>
+                  <input type="email" id="cf-email" placeholder="you@email.com"
+                    style="width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;font-size:13px;font-family:var(--font-body);color:var(--text-dark);outline:none">
+                </div>
+                <div style="margin-bottom:14px">
+                  <label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px">Organisation <span style="color:var(--text-light);font-weight:400">(optional)</span></label>
+                  <input type="text" id="cf-org" placeholder="School, office, studio…"
+                    style="width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;font-size:13px;font-family:var(--font-body);color:var(--text-dark);outline:none">
+                </div>
+                <div style="margin-bottom:20px">
+                  <label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px">Message</label>
+                  <textarea id="cf-message" rows="4" placeholder="Tell us about your requirement, bulk order, or any questions…" required
+                    style="width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;font-size:13px;font-family:var(--font-body);color:var(--text-dark);outline:none;resize:vertical"></textarea>
+                </div>
+                <button type="submit"
+                  style="width:100%;padding:13px;background:var(--green-dark);color:#fff;border:none;border-radius:var(--radius-btn);font-size:14px;font-weight:700;font-family:var(--font-body);cursor:pointer">
+                  Send Message →
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WhatsApp CTA strip -->
+      <div style="background:var(--green-dark);padding:28px 0;margin-top:20px">
+        <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
+          <div>
+            <div style="font-family:var(--font-heading);font-size:20px;font-weight:700;color:#fff">Prefer WhatsApp?</div>
+            <div style="font-size:13.5px;color:rgba(255,255,255,.8);margin-top:4px">Message us directly — we respond to bulk enquiries within a few hours.</div>
+          </div>
+          <a href="https://wa.me/919848066608?text=${encodeURIComponent('Hi Padmavathi Traders! I have an enquiry about your products.')}"
+            target="_blank" rel="noopener"
+            style="display:inline-flex;align-items:center;gap:10px;background:#25D366;color:#fff;padding:13px 24px;border-radius:var(--radius-btn);font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap">
+            💬 Chat on WhatsApp
+          </a>
+        </div>
+      </div>
+    `;
+
+    /* Form submission */
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('cf-name').value.trim();
+      const msg  = document.getElementById('cf-message').value.trim();
+      if (!name) { showToast('Please enter your name', 'error'); return; }
+      if (!msg)  { showToast('Please enter a message', 'error'); return; }
+      document.getElementById('contact-form-wrap').innerHTML = `
+        <div style="text-align:center;padding:32px 0">
+          <div style="font-size:48px;margin-bottom:16px">✅</div>
+          <div style="font-family:var(--font-heading);font-size:20px;font-weight:700;color:var(--text-dark);margin-bottom:8px">Message sent!</div>
+          <p style="font-size:14px;color:var(--text-muted);line-height:1.6;max-width:320px;margin:0 auto">
+            Thanks, ${name.split(' ')[0]}. We'll get back to you within 1 business day via WhatsApp or email.
+          </p>
+        </div>
+      `;
+    });
+  </script>
+</body>
+</html>

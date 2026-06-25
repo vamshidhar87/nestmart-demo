@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories — Padmavathi Traders Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<script src="/js/data.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/components.js"></script>
+<script>
+injectAdminShell('/admin/categories');
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('admin-page-title').textContent = 'Categories';
+
+  const CAT_EMOJI = {
+    'pens-writing': '🖊️', 'notebooks-journals': '📓', 'art-craft': '🎨',
+    'office-supplies': '📎', 'paper-notepads': '📄', 'school-supplies': '🎒',
+    'markers-highlighters': '🖍️', 'files-folders': '📁',
+    'desk-accessories': '🖥️', 'bags-cases': '👜'
+  };
+  const catIcon = c => CAT_EMOJI[c.slug] || '📦';
+
+  const cats = NM_DATA.categories.map(c => ({...c}));
+  const PROTECTED = [1]; // Pens & Markers is system-protected
+
+  function openModal(cat) {
+    document.getElementById('cat-modal').classList.add('open');
+    if (cat) {
+      document.getElementById('cat-modal-title').textContent = 'Edit Category';
+      document.getElementById('c-name').value = cat.name;
+      document.getElementById('c-slug').value = cat.slug;
+      document.getElementById('c-icon').value = catIcon(cat);
+      document.getElementById('c-featured').checked = cat.featured;
+      document.getElementById('c-visible').checked = cat.visible;
+    } else {
+      document.getElementById('cat-modal-title').textContent = 'Add Category';
+      document.getElementById('c-name').value = '';
+      document.getElementById('c-slug').value = '';
+      document.getElementById('c-icon').value = '📦';
+      document.getElementById('c-featured').checked = false;
+      document.getElementById('c-visible').checked = true;
+    }
+    document.getElementById('c-name').addEventListener('input', e => {
+      document.getElementById('c-slug').value = e.target.value.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+    });
+  }
+  function closeModal() { document.getElementById('cat-modal').classList.remove('open'); }
+
+  function render() {
+    document.getElementById('main-content').innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:13px;color:var(--text-muted)">${cats.length} categories</div>
+        <button class="btn btn-primary" id="add-cat-btn">+ Add Category</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>Icon</th><th>Name</th><th>Slug</th><th>Products</th><th>Featured</th><th>Visible</th><th>Sort Order</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              ${cats.map(c => `
+                <tr>
+                  <td style="font-size:22px">${catIcon(c)}</td>
+                  <td>
+                    <div style="font-weight:600;color:var(--text-dark)">${c.name}</div>
+                    ${PROTECTED.includes(c.id) ? '<span style="font-size:11px;color:var(--amber)">🔒 System category</span>' : ''}
+                  </td>
+                  <td><span class="tag">${c.slug}</span></td>
+                  <td><span class="badge badge-gray">${c.productCount}</span></td>
+                  <td>
+                    <label class="toggle">
+                      <input type="checkbox" ${c.featured?'checked':''} onchange="showToast('Category updated!')">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </td>
+                  <td>
+                    <label class="toggle">
+                      <input type="checkbox" ${c.visible?'checked':''} onchange="showToast('Category updated!')">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </td>
+                  <td><input type="number" class="editable" value="${c.id}" style="width:60px" onchange="showToast('Sort order updated!')"></td>
+                  <td>
+                    <div style="display:flex;gap:6px">
+                      <button class="btn btn-icon btn-ghost edit-cat-btn" data-id="${c.id}" title="Edit">✏️</button>
+                      ${PROTECTED.includes(c.id)
+                        ? '<button class="btn btn-icon btn-ghost" disabled title="Protected" style="opacity:.4">🔒</button>'
+                        : `<button class="btn btn-icon btn-ghost" onclick="showToast('Category deleted!')" title="Delete">🗑️</button>`
+                      }
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-overlay" id="cat-modal">
+        <div class="modal" style="max-width:440px">
+          <div class="modal-header">
+            <span class="modal-title" id="cat-modal-title">Add Category</span>
+            <button class="modal-close" id="cat-modal-close">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group"><label class="form-label">Category Name *</label><input type="text" class="form-control" id="c-name"></div>
+            <div class="form-group"><label class="form-label">Slug (auto-generated)</label><input type="text" class="form-control" id="c-slug"></div>
+            <div class="form-group"><label class="form-label">Icon (emoji)</label><input type="text" class="form-control" id="c-icon" placeholder="📦" style="font-size:20px;letter-spacing:4px"></div>
+            <div style="display:flex;gap:20px;margin-top:4px">
+              <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer"><input type="checkbox" id="c-featured"> Featured</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer"><input type="checkbox" id="c-visible" checked> Visible</label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" id="cat-modal-cancel">Cancel</button>
+            <button class="btn btn-primary" id="cat-modal-save">Save Category</button>
+          </div>
+        </div>
+      </div>`;
+
+    document.getElementById('add-cat-btn').addEventListener('click', () => openModal(null));
+    document.getElementById('cat-modal-close').addEventListener('click', closeModal);
+    document.getElementById('cat-modal-cancel').addEventListener('click', closeModal);
+    document.getElementById('cat-modal-save').addEventListener('click', () => { closeModal(); showToast('Category saved!'); });
+    document.getElementById('cat-modal').addEventListener('click', e => { if(e.target === document.getElementById('cat-modal')) closeModal(); });
+    document.querySelectorAll('.edit-cat-btn').forEach(btn => btn.addEventListener('click', () => {
+      const cat = cats.find(c => c.id === +btn.dataset.id);
+      if (cat) openModal(cat);
+    }));
+  }
+
+  render();
+});
+</script>
+</body>
+</html>

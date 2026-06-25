@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quote Review — Padmavathi Traders Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .review-grid { display:grid; grid-template-columns:1fr 340px; gap:20px; margin-top:20px; }
+    .fee-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border-light); }
+    .fee-row:last-child { border-bottom:none; }
+    .fee-name { flex:1; font-size:14px; font-weight:500; }
+    .fee-val { width:90px; }
+    .fee-example { font-size:12px; color:var(--text-muted); }
+    .total-row { display:flex; justify-content:space-between; padding:8px 0; font-size:14px; }
+    .total-grand { font-family:var(--font-heading); font-size:22px; font-weight:700; color:var(--green-dark); }
+    .revision-item { background:var(--bg-hover); border-radius:var(--radius-sm); padding:10px 14px; margin-bottom:8px; }
+    .wa-preview { background:#e5ddd5; border-radius:12px; padding:16px; }
+    .wa-bubble { background:#dcf8c6; border-radius:8px 8px 0 8px; padding:12px 14px; font-size:14px; line-height:1.6; white-space:pre-wrap; word-break:break-word; }
+  </style>
+</head>
+<body>
+<script src="/js/data.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/components.js"></script>
+<script>
+injectAdminShell('/admin/quotes');
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('admin-page-title').textContent = 'Quote Review';
+
+  const quote = NM_DATA.quotes[0];
+  const items = quote.items.map(i => ({...i}));
+  const fees = JSON.parse(JSON.stringify(quote.fees));
+
+  function calcSubtotal() { return items.reduce((s,i) => s + i.qty * i.unitPrice, 0); }
+
+  function calcTotal() {
+    let sub = calcSubtotal();
+    let disc = 0, gst = 0, delivery = 0, handling = 0;
+    if (fees.bulkDiscount.enabled) disc = Math.round(sub * fees.bulkDiscount.value / 100);
+    if (fees.delivery.enabled) delivery = fees.delivery.value;
+    if (fees.handling.enabled) handling = fees.handling.value;
+    const afterDisc = sub - disc + delivery + handling;
+    if (fees.gst.enabled) gst = Math.round(afterDisc * fees.gst.value / 100);
+    return { sub, disc, delivery, handling, gst, total: afterDisc + gst };
+  }
+
+  function fmtDate(d) { return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+
+  function renderTotal() {
+    const t = calcTotal();
+    let html = `<div class="total-row"><span>Subtotal</span><span>${NM.fmt(t.sub)}</span></div>`;
+    if (fees.bulkDiscount.enabled && t.disc) html += `<div class="total-row" style="color:var(--green-dark)"><span>Bulk Discount (${fees.bulkDiscount.value}%)</span><span>− ${NM.fmt(t.disc)}</span></div>`;
+    if (fees.delivery.enabled && t.delivery) html += `<div class="total-row"><span>Delivery</span><span>${NM.fmt(t.delivery)}</span></div>`;
+    if (fees.handling.enabled && t.handling) html += `<div class="total-row"><span>Handling</span><span>${NM.fmt(t.handling)}</span></div>`;
+    if (fees.gst.enabled) html += `<div class="total-row"><span>GST (${fees.gst.value}%)</span><span>${NM.fmt(t.gst)}</span></div>`;
+    html += `<div style="border-top:2px solid var(--border);margin-top:8px;padding-top:12px;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;font-size:16px">Grand Total</span><span class="total-grand">${NM.fmt(t.total)}</span></div>`;
+    document.getElementById('total-panel').innerHTML = html;
+  }
+
+  function renderWAPreview() {
+    const t = calcTotal();
+    const msg = document.getElementById('wa-textarea') ? document.getElementById('wa-textarea').value :
+      `Dear ${quote.customerName},\n\nYour quote ${quote.id} has been prepared.\nItems: ${items.length} products\nGrand Total: ${NM.fmt(t.total)}\n\nPlease login to your account to review and approve.\n\nThank you,\nPadmavathi Traders`;
+    const preview = document.getElementById('wa-preview-bubble');
+    if (preview) preview.textContent = msg;
+  }
+
+  function render() {
+    document.getElementById('main-content').innerHTML = `
+      <a href="/admin/quotes.html" style="display:inline-flex;align-items:center;gap:6px;color:var(--text-muted);font-size:14px;margin-bottom:16px">← Back to Quotes</a>
+
+      <div class="review-grid">
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header"><span class="card-title">👤 Customer</span></div>
+            <div class="card-body" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+              <div>
+                <div style="font-size:18px;font-weight:700;color:var(--text-dark);margin-bottom:4px">${quote.customerName}</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <span class="badge badge-blue">${quote.customerType}</span>
+                  ${quote.gstin ? `<span class="badge badge-gray">GST: ${quote.gstin}</span>` : ''}
+                </div>
+              </div>
+              <a href="/admin/customers.html" class="btn btn-ghost btn-sm">View Profile →</a>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header"><span class="card-title">📋 Quote Items</span></div>
+            <div class="table-wrap">
+              <table class="table" id="items-table">
+                <thead><tr><th>Product</th><th>SKU</th><th style="width:80px">Qty</th><th style="width:110px">Unit Price</th><th>Line Total</th></tr></thead>
+                <tbody>
+                  ${items.map((item, idx) => `
+                    <tr>
+                      <td style="font-weight:500">${item.name}</td>
+                      <td style="font-size:12px;color:var(--text-muted)">${item.sku}</td>
+                      <td><input type="number" class="editable qty-input" data-idx="${idx}" value="${item.qty}" min="1" style="width:70px"></td>
+                      <td><input type="number" class="editable price-input" data-idx="${idx}" value="${item.unitPrice}" min="0" style="width:90px"></td>
+                      <td class="line-total-${idx}" style="font-weight:600;color:var(--green-dark)">${NM.fmt(item.qty * item.unitPrice)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+            <div style="padding:12px 14px;border-top:1px solid var(--border-light)">
+              <button class="btn btn-ghost btn-sm">+ Add Item</button>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header"><span class="card-title">⚙️ Fees & Adjustments</span></div>
+            <div class="card-body">
+              ${Object.entries(fees).map(([key, fee]) => {
+                const labels = { bulkDiscount:'Bulk Discount', gst:'GST', delivery:'Delivery Charge', handling:'Handling Fee' };
+                const isPercent = key === 'bulkDiscount' || key === 'gst';
+                return `<div class="fee-row">
+                  <label class="toggle"><input type="checkbox" class="fee-toggle" data-key="${key}" ${fee.enabled?'checked':''}><span class="toggle-slider"></span></label>
+                  <span class="fee-name">${labels[key]}</span>
+                  <input type="number" class="editable fee-value" data-key="${key}" value="${fee.value}" min="0" style="width:80px">
+                  <span style="font-size:13px;color:var(--text-muted);min-width:30px">${isPercent?'%':'₹'}</span>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><span class="card-title">📅 Revision History</span></div>
+            <div class="card-body">
+              ${quote.revisions.length === 0
+                ? '<p style="color:var(--text-muted);font-size:14px">No revisions yet.</p>'
+                : quote.revisions.map(r => `<div class="revision-item"><div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">${fmtDate(r.date)}</div><div style="font-size:14px">${r.note}</div></div>`).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header"><span class="card-title">💰 Order Summary</span></div>
+            <div class="card-body" id="total-panel"></div>
+          </div>
+
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-header"><span class="card-title">📤 Actions</span></div>
+            <div class="card-body">
+              <button class="btn btn-primary btn-full" id="send-revision-btn">Send Revision to Customer</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><span class="card-title">💬 WhatsApp</span></div>
+            <div class="card-body">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Message Preview</div>
+              <div class="wa-preview" style="margin-bottom:12px">
+                <div class="wa-bubble" id="wa-preview-bubble"></div>
+                <div style="font-size:11px;color:#667781;text-align:right;margin-top:4px">Now ✓✓</div>
+              </div>
+              <textarea class="form-control" id="wa-textarea" rows="5" style="font-size:13px;margin-bottom:10px"></textarea>
+              <button class="btn btn-outline btn-full" id="wa-btn">💬 Open in WhatsApp</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    const t = calcTotal();
+    const defaultMsg = `Dear ${quote.customerName},\n\nYour quote ${quote.id} has been prepared.\nItems: ${items.length} products\nGrand Total: ${NM.fmt(t.total)}\n\nPlease login to your account to review and approve.\n\nThank you,\nPadmavathi Traders`;
+    document.getElementById('wa-textarea').value = defaultMsg;
+
+    renderTotal();
+    renderWAPreview();
+
+    document.querySelectorAll('.qty-input').forEach(input => input.addEventListener('input', e => {
+      const idx = +e.target.dataset.idx;
+      items[idx].qty = Math.max(1, +e.target.value || 1);
+      document.querySelector(`.line-total-${idx}`).textContent = NM.fmt(items[idx].qty * items[idx].unitPrice);
+      renderTotal();
+    }));
+
+    document.querySelectorAll('.price-input').forEach(input => input.addEventListener('input', e => {
+      const idx = +e.target.dataset.idx;
+      items[idx].unitPrice = Math.max(0, +e.target.value || 0);
+      document.querySelector(`.line-total-${idx}`).textContent = NM.fmt(items[idx].qty * items[idx].unitPrice);
+      renderTotal();
+    }));
+
+    document.querySelectorAll('.fee-toggle').forEach(chk => chk.addEventListener('change', e => {
+      fees[e.target.dataset.key].enabled = e.target.checked;
+      renderTotal();
+    }));
+
+    document.querySelectorAll('.fee-value').forEach(input => input.addEventListener('input', e => {
+      fees[e.target.dataset.key].value = +e.target.value || 0;
+      renderTotal();
+    }));
+
+    document.getElementById('wa-textarea').addEventListener('input', () => renderWAPreview());
+
+    document.getElementById('send-revision-btn').addEventListener('click', () => showToast('Revision sent to customer!'));
+
+    document.getElementById('wa-btn').addEventListener('click', () => {
+      const msg = document.getElementById('wa-textarea').value;
+      window.open('https://wa.me/919876543210?text=' + encodeURIComponent(msg), '_blank');
+    });
+  }
+
+  render();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,803 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Padmavathi Traders — Stationery & Art Supplies, Hyderabad</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* ── Hero Carousel ── */
+    .hero-carousel {
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      opacity: 0;
+      transition: opacity .55s ease;
+      pointer-events: none;
+    }
+    .hero-slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      position: relative;
+    }
+    .hero-slides-inner {
+      position: relative;
+    }
+    .hero-slide:not(.active) {
+      position: absolute;
+      inset: 0;
+    }
+
+    .hero-inner {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      padding: 38px 30px 24px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .hero-text-col {
+      flex: 1 1 340px;
+      min-width: 0;
+    }
+
+    .hero-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 13px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      background: #fff;
+      color: #1f6b4d;
+      border: 1px solid rgba(31,107,77,.14);
+      margin-bottom: 14px;
+    }
+
+    .hero-h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(28px, 3.5vw, 42px);
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.06;
+      letter-spacing: -.02em;
+      margin-bottom: 0;
+    }
+    .hero-h1-accent {
+      color: #3BB77E;
+      display: block;
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: #475569;
+      max-width: 420px;
+      line-height: 1.6;
+      margin: 16px 0 24px;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 13px 26px;
+      border-radius: 11px;
+      font-size: 14.5px;
+      font-weight: 700;
+      background: #1f6b4d;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      text-decoration: none;
+      box-shadow: 0 8px 20px rgba(31,107,77,.25);
+      transition: background .18s, transform .18s;
+    }
+    .hero-cta:hover {
+      background: #185d42;
+      transform: translateY(-1px);
+    }
+
+    .hero-img-col {
+      flex: 1 1 320px;
+      min-width: 0;
+    }
+    .hero-img-col img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(15,23,42,.16);
+      display: block;
+    }
+
+    /* Dots */
+    .hero-dots {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      padding: 14px 0 18px;
+    }
+    .hero-dot {
+      height: 7px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: all .25s;
+      width: 7px;
+      background: #cbd5e1;
+      border: none;
+      padding: 0;
+    }
+    .hero-dot.active {
+      width: 24px;
+      background: #3BB77E;
+    }
+
+    /* Nav arrows */
+    .hero-prev, .hero-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid #e6eaee;
+      cursor: pointer;
+      font-size: 18px;
+      color: #1E293B;
+      box-shadow: 0 4px 12px rgba(0,0,0,.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .hero-prev { left: 14px; }
+    .hero-next { right: 14px; }
+
+    /* ── Section layout ── */
+    .home-section {
+      padding: 30px 0 8px;
+    }
+    .home-section + .home-section {
+      border-top: 1px solid var(--border-light);
+    }
+
+    .section-head-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      gap: 16px;
+    }
+    .section-heading {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -.01em;
+    }
+    .section-desc {
+      font-size: 13px;
+      color: #64748B;
+      margin-top: 3px;
+    }
+    .section-view-all {
+      font-size: 13px;
+      font-weight: 700;
+      color: #3BB77E;
+      white-space: nowrap;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .section-view-all:hover { text-decoration: underline; }
+
+    /* ── Categories (horizontal scroll) ── */
+    .cat-scroll {
+      display: flex;
+      gap: 18px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: none;
+    }
+    .cat-scroll::-webkit-scrollbar { display: none; }
+
+    .cat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+      flex-shrink: 0;
+      width: 104px;
+      text-decoration: none;
+      transition: transform .18s;
+    }
+    .cat-item:hover { transform: translateY(-3px); }
+    .cat-item-img {
+      width: 104px;
+      height: 104px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #eef1f4;
+      box-shadow: 0 4px 14px rgba(15,23,42,.06);
+    }
+    .cat-item-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .cat-item-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #1E293B;
+      text-align: center;
+      line-height: 1.25;
+    }
+    .cat-item-count {
+      font-size: 11px;
+      color: #94A3B8;
+      margin-top: -5px;
+    }
+
+    /* ── Promo Strip ── */
+    .promo-strip { padding: 22px 0; }
+    .promo-strip-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .promo-card {
+      border-radius: 16px;
+      padding: 22px;
+      border: 1px solid rgba(15,23,42,.05);
+      display: flex;
+      flex-direction: column;
+    }
+    .promo-card-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .promo-card-title {
+      font-family: var(--font-heading);
+      font-size: 19px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.2;
+      margin: 8px 0 6px;
+    }
+    .promo-card-sub {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.5;
+      margin-bottom: 14px;
+      flex: 1;
+    }
+    .promo-card-btn {
+      background: #fff;
+      border-radius: 9px;
+      padding: 8px 16px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font-body);
+      text-decoration: none;
+      display: inline-block;
+      border: 1.4px solid;
+      transition: opacity .15s;
+      align-self: flex-start;
+    }
+    .promo-card-btn:hover { opacity: .8; }
+
+    /* ── Filter Tabs ── */
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .filter-tab {
+      font-size: 12.5px;
+      padding: 7px 15px;
+      border-radius: 99px;
+      cursor: pointer;
+      font-weight: 600;
+      border: 1px solid #e6eaee;
+      background: #fff;
+      color: #475569;
+      white-space: nowrap;
+      font-family: var(--font-body);
+      transition: all .15s;
+    }
+    .filter-tab:hover { border-color: #3BB77E; color: #3BB77E; }
+    .filter-tab.active {
+      border-color: #3BB77E;
+      background: #3BB77E;
+      color: #fff;
+    }
+
+    /* ── Product Grid ── */
+    .products-grid-home {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(184px, 1fr));
+      gap: 16px;
+    }
+
+    .prod-card {
+      background: #fff;
+      border: 1px solid #eef1f4;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: box-shadow .2s, transform .2s;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .prod-card:hover {
+      box-shadow: 0 14px 30px rgba(15,23,42,.1);
+      transform: translateY(-3px);
+    }
+
+    .prod-img {
+      position: relative;
+      aspect-ratio: 1;
+      background: #f6f8fa;
+      overflow: hidden;
+    }
+    .prod-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .prod-discount-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 7px;
+      letter-spacing: .02em;
+      pointer-events: none;
+    }
+
+    .prod-wishlist-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.95);
+      border: 1px solid #eef1f4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,.08);
+      transition: all .15s;
+      color: #94A3B8;
+    }
+    .prod-wishlist-btn.active { color: #EF4444; }
+
+    .prod-body {
+      padding: 13px 14px 15px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .prod-cat {
+      font-size: 11px;
+      color: #3BB77E;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+    .prod-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1E293B;
+      line-height: 1.35;
+      margin: 5px 0 3px;
+      min-height: 36px;
+    }
+    .prod-brand-line {
+      font-size: 11.5px;
+      color: #94A3B8;
+      margin-bottom: 10px;
+    }
+    .prod-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      margin-bottom: 11px;
+    }
+    .prod-price {
+      font-size: 17px;
+      font-weight: 800;
+      color: #1f6b4d;
+      font-variant-numeric: tabular-nums;
+    }
+    .prod-price-original {
+      font-size: 12.5px;
+      color: #b0b8c4;
+      text-decoration: line-through;
+      font-variant-numeric: tabular-nums;
+    }
+    .prod-add-btn {
+      width: 100%;
+      background: #3BB77E;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 9px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: background .15s;
+    }
+    .prod-add-btn:hover { background: #2c9d68; }
+    .prod-add-btn:disabled {
+      background: #e2e8f0;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+    .prod-notify-btn {
+      width: 100%;
+      background: #fff;
+      color: #1f6b4d;
+      border: 1.4px solid #cdeede;
+      border-radius: 10px;
+      padding: 9px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font-body);
+    }
+
+    /* ── Special Offers Section ── */
+    .offers-section {
+      background: #f6f8fa;
+      border-top: 1px solid #eef1f4;
+      padding: 30px 0;
+    }
+
+    /* ── Trust Band ── */
+    .trust-band {
+      border-top: 1px solid #eef1f4;
+      padding: 28px 0;
+    }
+    .trust-band-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 18px;
+    }
+    .trust-item { display: flex; align-items: center; gap: 13px; }
+    .trust-icon { font-size: 26px; flex-shrink: 0; }
+    .trust-title { font-size: 14px; font-weight: 700; color: #1E293B; }
+    .trust-sub { font-size: 12px; color: #64748B; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .hero-img-col { display: none; }
+      .promo-strip-grid { grid-template-columns: 1fr; }
+      .trust-band-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .products-grid-home { grid-template-columns: repeat(2, 1fr); }
+      .trust-band-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/data.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/components.js"></script>
+<script>
+  injectStorefrontShell();
+
+  (function() {
+    const main = document.getElementById('main-content');
+    const data = window.NM_DATA;
+    const categories = data.categories.filter(c => c.visible);
+    const allProducts = data.products;
+
+    /* ── Hero Slides ── */
+    const HEROES = [
+      {
+        chip: '🏫 Back-to-School Sale',
+        title1: 'School supplies,',
+        title2: 'sorted for the year',
+        sub: 'Up to 40% off notebooks, pens and art kits. Bulk orders for schools & colleges always welcome.',
+        cta: 'Shop School Range',
+        link: '/shop.html?cat=school-supplies',
+        img: NM_IMG.heroSchool,
+        bg: 'linear-gradient(120deg,#f0fdf4 0%,#dcfce7 100%)'
+      },
+      {
+        chip: '🏢 For Offices & Corporates',
+        title1: 'Stock your office,',
+        title2: 'the smart way',
+        sub: 'Wholesale pricing, GST invoices and same-week delivery for businesses of every size.',
+        cta: 'Request Bulk Quote',
+        link: '/cart.html',
+        img: NM_IMG.laptopdesk,
+        bg: 'linear-gradient(120deg,#eff6ff 0%,#dbeafe 100%)'
+      },
+      {
+        chip: '🎨 Artist\'s Corner',
+        title1: 'Premium supplies',
+        title2: 'for every artist',
+        sub: 'Watercolours, brushes, sketchpads and fine-liners from the brands creatives trust.',
+        cta: 'Explore Art & Craft',
+        link: '/shop.html?cat=art-craft',
+        img: NM_IMG.heroArt,
+        bg: 'linear-gradient(120deg,#fef9c3 0%,#fde68a 100%)'
+      }
+    ];
+
+    const slidesHTML = HEROES.map((h, i) => `
+      <div class="hero-slide${i === 0 ? ' active' : ''}" data-index="${i}" style="background:${h.bg};">
+        <div class="container" style="width:100%">
+          <div class="hero-inner">
+            <div class="hero-text-col">
+              <div class="hero-chip">${h.chip}</div>
+              <div class="hero-h1">${h.title1}<span class="hero-h1-accent">${h.title2}</span></div>
+              <p class="hero-sub">${h.sub}</p>
+              <a href="${h.link}" class="hero-cta">${h.cta} <span>→</span></a>
+            </div>
+            <div class="hero-img-col">
+              <img src="${h.img}" alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    const dotsHTML = HEROES.map((_, i) => `
+      <button class="hero-dot${i === 0 ? ' active' : ''}" data-to="${i}" aria-label="Go to slide ${i + 1}"></button>
+    `).join('');
+
+    /* ── Category Scroll ── */
+    const catHTML = categories.map(cat => `
+      <a href="/shop.html?cat=${cat.slug}" class="cat-item">
+        <div class="cat-item-img">
+          <img src="${cat.img}" alt="${cat.name}" loading="lazy">
+        </div>
+        <div class="cat-item-name">${cat.name}</div>
+        <div class="cat-item-count">${cat.productCount} items</div>
+      </a>
+    `).join('');
+
+    /* ── Promo Strip ── */
+    const PROMOS = [
+      { tag: 'For Business', tagColor: '#1f6b4d', title: 'Bulk orders for offices & corporates', sub: 'Custom quotes, GST invoices and dedicated account support.', cta: 'Request a Quote', bg: '#ECFDF5', border: '#1f6b4d', link: '/cart.html' },
+      { tag: 'Students', tagColor: '#B45309', title: 'College & school discounts', sub: 'Show a valid student ID and save more on every order.', cta: 'See Student Deals', bg: '#FEF3C7', border: '#B45309', link: '/shop.html' },
+      { tag: 'Creators', tagColor: '#1E40AF', title: "The artist's premium corner", sub: 'Hand-picked fine-art supplies for serious work.', cta: 'Explore Now', bg: '#EFF6FF', border: '#1E40AF', link: '/shop.html?cat=art-craft' }
+    ];
+
+    const promoHTML = PROMOS.map(p => `
+      <div class="promo-card" style="background:${p.bg}">
+        <div class="promo-card-tag" style="color:${p.tagColor}">${p.tag}</div>
+        <div class="promo-card-title">${p.title}</div>
+        <div class="promo-card-sub">${p.sub}</div>
+        <a href="${p.link}" class="promo-card-btn" style="color:${p.border};border-color:${p.border}">${p.cta} →</a>
+      </div>
+    `).join('');
+
+    /* ── Product Card ── */
+    function prodCardHTML(p, autoDiscount) {
+      const salePrice = p.sale || p.price;
+      const mrp = p.sale ? p.price : null;
+      const wished = NM.inWishlist(p.id);
+      const disc = mrp ? Math.round((mrp - salePrice) / mrp * 100) : 0;
+      const badge = p.badge || (autoDiscount && disc > 0 ? {l:'-'+disc+'%', c:'#F59E0B'} : null);
+      return `
+        <div class="prod-card" data-id="${p.id}" style="cursor:pointer" onclick="window.location.href='/product?id=${p.id}'">
+          <div class="prod-img">
+            <img src="${p.img}" alt="${p.name}" loading="lazy">
+            ${badge ? `<span class="prod-discount-badge" style="background:${badge.c}">${badge.l}</span>` : ''}
+            <button class="prod-wishlist-btn${wished ? ' active' : ''}" data-id="${p.id}" onclick="event.stopPropagation();handleWishlist(event,${p.id})" aria-label="Wishlist">${wished ? '♥' : '♡'}</button>
+          </div>
+          <div class="prod-body">
+            <div class="prod-cat">${p.category}</div>
+            <div class="prod-name">${p.name}</div>
+            <div class="prod-brand-line">By ${p.brand}</div>
+            <div class="prod-price-row">
+              <span class="prod-price">${NM.fmt(salePrice)}</span>
+              ${mrp ? `<span class="prod-price-original">${NM.fmt(mrp)}</span>` : ''}
+            </div>
+            ${!p.inStock
+              ? `<button class="prod-notify-btn" onclick="event.stopPropagation()">🔔 Notify When In Stock</button>`
+              : `<button class="prod-add-btn" onclick="event.stopPropagation();handleAddToCart(${p.id})">+ Add to Cart</button>`
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    /* ── Popular Products (with filter tabs) ── */
+    const TAB_LABELS = ['All', 'Pens & Writing', 'Notebooks & Journals', 'Art & Craft', 'Office Supplies', 'Markers & Highlighters', 'Bags & Cases'];
+    let activeFilter = 'All';
+
+    function getFilteredProducts() {
+      return activeFilter === 'All' ? allProducts : allProducts.filter(p => p.category === activeFilter);
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('products-grid');
+      if (grid) grid.innerHTML = getFilteredProducts().map(p => prodCardHTML(p)).join('');
+    }
+
+    function renderTabs() {
+      return TAB_LABELS.map(label => `
+        <button class="filter-tab${label === activeFilter ? ' active' : ''}" data-filter="${label}">${label}</button>
+      `).join('');
+    }
+
+    /* ── Special Offers (products with sale price) ── */
+    const offerProducts = allProducts.filter(p => p.sale && p.inStock);
+
+    /* ── Full Page HTML ── */
+    main.innerHTML = `
+      <!-- Hero Carousel -->
+      <section class="hero-carousel" aria-label="Featured promotions" style="position:relative">
+        <div class="hero-slides-inner">
+          ${slidesHTML}
+        </div>
+        <button class="hero-prev" id="hero-prev" aria-label="Previous slide">‹</button>
+        <button class="hero-next" id="hero-next" aria-label="Next slide">›</button>
+        <div class="hero-dots" id="hero-dots">${dotsHTML}</div>
+      </section>
+
+      <!-- Shop by Category -->
+      <section class="home-section" aria-labelledby="cat-heading">
+        <div class="container">
+          <div class="section-head-row">
+            <div>
+              <div class="section-heading" id="cat-heading">Shop by Category</div>
+              <div class="section-desc">Everything from a single pen to a full office fit-out</div>
+            </div>
+            <a href="/shop.html" class="section-view-all">All categories →</a>
+          </div>
+          <div class="cat-scroll">
+            ${catHTML}
+          </div>
+        </div>
+      </section>
+
+      <!-- Promo Strip -->
+      <section style="padding:22px 0">
+        <div class="container">
+          <div class="promo-strip-grid">
+            ${promoHTML}
+          </div>
+        </div>
+      </section>
+
+      <!-- Popular Products -->
+      <section class="home-section" aria-labelledby="prod-heading" style="padding-bottom:30px">
+        <div class="container">
+          <div class="section-head-row">
+            <div>
+              <div class="section-heading" id="prod-heading">Popular Products</div>
+              <div class="section-desc">Best-selling supplies this month</div>
+            </div>
+            <a href="/shop.html" class="section-view-all">View all →</a>
+          </div>
+          <div class="filter-tabs" id="filter-tabs">
+            ${renderTabs()}
+          </div>
+          <div class="products-grid-home" id="products-grid">
+            ${getFilteredProducts().map(p => prodCardHTML(p)).join('')}
+          </div>
+        </div>
+      </section>
+
+      <!-- Special Offers -->
+      <section class="offers-section" aria-labelledby="offers-heading">
+        <div class="container">
+          <div class="section-head-row">
+            <div>
+              <div class="section-heading" id="offers-heading">🔥 Special Offers</div>
+              <div class="section-desc">Limited-time deals across the store</div>
+            </div>
+            <a href="/offers.html" class="section-view-all">View all offers →</a>
+          </div>
+          <div class="products-grid-home">
+            ${offerProducts.map(p => prodCardHTML(p, true)).join('')}
+          </div>
+        </div>
+      </section>
+
+      <!-- Trust Band -->
+      <section class="trust-band">
+        <div class="container">
+          <div class="trust-band-grid">
+            <div class="trust-item"><div class="trust-icon">🚚</div><div><div class="trust-title">Free delivery over ₹999</div><div class="trust-sub">Same-week dispatch citywide</div></div></div>
+            <div class="trust-item"><div class="trust-icon">🧾</div><div><div class="trust-title">GST invoices</div><div class="trust-sub">For offices & registered firms</div></div></div>
+            <div class="trust-item"><div class="trust-icon">📋</div><div><div class="trust-title">Bulk quotes</div><div class="trust-sub">Custom pricing for large orders</div></div></div>
+            <div class="trust-item"><div class="trust-icon">↩️</div><div><div class="trust-title">Easy returns</div><div class="trust-sub">7-day no-questions policy</div></div></div>
+          </div>
+        </div>
+      </section>
+    `;
+
+    /* ── Filter Tabs interaction ── */
+    document.getElementById('filter-tabs').addEventListener('click', function(e) {
+      const btn = e.target.closest('.filter-tab');
+      if (!btn) return;
+      activeFilter = btn.dataset.filter;
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.toggle('active', t.dataset.filter === activeFilter));
+      renderProducts();
+    });
+
+    /* ── Cart interaction ── */
+    window.handleAddToCart = function(productId) {
+      const product = data.products.find(p => p.id === productId);
+      if (!product || !product.inStock) return;
+      NM.addToCart(product, 1);
+      showToast(product.name.split('·')[0].trim() + ' added to cart', 'success');
+    };
+
+    /* ── Wishlist interaction ── */
+    window.handleWishlist = function(event, productId) {
+      event.preventDefault();
+      event.stopPropagation();
+      const added = NM.toggleWishlist(productId);
+      document.querySelectorAll(`[data-id="${productId}"].prod-wishlist-btn`).forEach(btn => {
+        btn.classList.toggle('active', added);
+        btn.innerHTML = added ? '♥' : '♡';
+      });
+      showToast(added ? 'Added to wishlist' : 'Removed from wishlist', added ? 'success' : 'info');
+    };
+
+    /* ── Hero Carousel logic ── */
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.hero-slide');
+    let autoTimer = null;
+
+    function goToSlide(idx) {
+      if (idx < 0) idx = slides.length - 1;
+      if (idx >= slides.length) idx = 0;
+      slides[currentSlide].classList.remove('active');
+      currentSlide = idx;
+      slides[currentSlide].classList.add('active');
+      document.querySelectorAll('#hero-dots .hero-dot').forEach(dot => {
+        dot.classList.toggle('active', parseInt(dot.dataset.to, 10) === currentSlide);
+      });
+    }
+
+    function startAuto() {
+      clearInterval(autoTimer);
+      autoTimer = setInterval(() => goToSlide(currentSlide + 1), 5000);
+    }
+
+    document.getElementById('hero-dots').addEventListener('click', function(e) {
+      const dot = e.target.closest('.hero-dot');
+      if (dot) { goToSlide(parseInt(dot.dataset.to, 10)); startAuto(); }
+    });
+
+    document.getElementById('hero-prev').addEventListener('click', () => { goToSlide(currentSlide - 1); startAuto(); });
+    document.getElementById('hero-next').addEventListener('click', () => { goToSlide(currentSlide + 1); startAuto(); });
+
+    const carousel = document.querySelector('.hero-carousel');
+    if (carousel) {
+      carousel.addEventListener('mouseenter', () => clearInterval(autoTimer));
+      carousel.addEventListener('mouseleave', startAuto);
+    }
+
+    startAuto();
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) clearInterval(autoTimer);
+  })();
+</script>
+</body>
+</html>

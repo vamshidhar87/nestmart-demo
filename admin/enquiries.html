@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enquiries — Padmavathi Traders Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .enq-wrap { display:grid; grid-template-columns:340px 1fr; height:calc(100vh - 110px); border:1px solid var(--border-light); border-radius:var(--radius-card); overflow:hidden; background:var(--bg-page); }
+    .enq-list { border-right:1px solid var(--border-light); overflow-y:auto; }
+    .enq-detail { overflow-y:auto; padding:24px; }
+    .enq-list-item { padding:14px 16px; border-bottom:1px solid var(--border-light); cursor:pointer; transition:background .15s; }
+    .enq-list-item:hover { background:var(--bg-hover); }
+    .enq-list-item.selected { background:var(--green-light); }
+    .status-colors { New:'#3B82F6', Replied:'#3BB77E', Archived:'#94a3b8' }
+    .reply-box { background:var(--green-light); border-left:3px solid var(--green-mid); border-radius:0 var(--radius-sm) var(--radius-sm) 0; padding:12px 16px; margin:16px 0; }
+  </style>
+</head>
+<body>
+<script src="/js/data.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/components.js"></script>
+<script>
+injectAdminShell('/admin/enquiries');
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('admin-page-title').textContent = 'Enquiries';
+
+  const enquiries = NM_DATA.enquiries.map(e => ({...e}));
+  let selectedId = enquiries[0].id;
+
+  const STATUS_DOT = { New:'background:#3B82F6', Replied:'background:#3BB77E', Archived:'background:#94a3b8' };
+  function timeAgo(dateStr) {
+    const diff = (Date.now() - new Date(dateStr)) / 1000;
+    if (diff < 3600) return Math.round(diff/60) + ' min ago';
+    if (diff < 86400) return Math.round(diff/3600) + 'h ago';
+    return Math.round(diff/86400) + 'd ago';
+  }
+
+  function renderList() {
+    document.getElementById('enq-list').innerHTML = enquiries.map(e => `
+      <div class="enq-list-item${e.id===selectedId?' selected':''}" data-id="${e.id}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-weight:600;font-size:14px;color:var(--text-dark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.subject}</div>
+          <span style="width:8px;height:8px;border-radius:50%;flex-shrink:0;${STATUS_DOT[e.status]||''}"></span>
+        </div>
+        <div style="font-size:13px;color:var(--text-muted)">${e.name}</div>
+        <div style="font-size:12px;color:var(--text-light);margin-top:2px">${timeAgo(e.date)}</div>
+      </div>
+    `).join('');
+
+    document.querySelectorAll('.enq-list-item').forEach(item => item.addEventListener('click', () => {
+      selectedId = item.dataset.id;
+      renderList();
+      renderDetail();
+    }));
+  }
+
+  function renderDetail() {
+    const e = enquiries.find(e => e.id === selectedId);
+    if (!e) { document.getElementById('enq-detail').innerHTML = '<p style="color:var(--text-muted);padding:24px">Select an enquiry</p>'; return; }
+
+    const STATUS_BADGE = { New:'badge-blue', Replied:'badge-green', Archived:'badge-gray' };
+
+    document.getElementById('enq-detail').innerHTML = `
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <div>
+          <span class="badge ${STATUS_BADGE[e.status]||'badge-gray'}" style="margin-bottom:8px">${e.status}</span>
+          <h2 style="font-family:var(--font-heading);font-size:18px;font-weight:700;color:var(--text-dark);margin-bottom:4px">${e.subject}</h2>
+          <div style="font-size:13px;color:var(--text-muted)">${e.name} · <a href="mailto:${e.email}" style="color:var(--green-dark)">${e.email}</a> · ${timeAgo(e.date)}</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-shrink:0">
+          <button class="btn btn-ghost btn-sm" id="archive-btn">Archive</button>
+        </div>
+      </div>
+
+      <div style="background:var(--bg-hover);border-radius:var(--radius-card);padding:16px 20px;margin-bottom:16px;font-size:15px;line-height:1.7;color:var(--text-dark)">
+        ${e.message}
+      </div>
+
+      ${e.reply ? `
+        <div class="reply-box">
+          <div style="font-size:12px;font-weight:600;color:var(--green-dark);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Your Reply</div>
+          <div style="font-size:14px;line-height:1.6">${e.reply}</div>
+        </div>
+      ` : ''}
+
+      ${e.status !== 'Archived' ? `
+        <div style="margin-top:16px">
+          <label class="form-label">Reply to ${e.name}</label>
+          <textarea class="form-control" id="reply-textarea" rows="4" placeholder="Type your reply…"></textarea>
+          <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end">
+            <button class="btn btn-primary" id="send-reply-btn">Send Reply</button>
+          </div>
+        </div>
+      ` : `<div style="padding:16px;background:var(--bg-hover);border-radius:var(--radius-card);color:var(--text-muted);font-size:14px;text-align:center">This enquiry has been archived.</div>`}`;
+
+    const archiveBtn = document.getElementById('archive-btn');
+    if (archiveBtn) archiveBtn.addEventListener('click', () => {
+      e.status = 'Archived';
+      renderList(); renderDetail();
+      showToast('Enquiry archived');
+    });
+
+    const sendBtn = document.getElementById('send-reply-btn');
+    if (sendBtn) sendBtn.addEventListener('click', () => {
+      const reply = document.getElementById('reply-textarea').value.trim();
+      if (!reply) { showToast('Please type a reply', 'error'); return; }
+      e.status = 'Replied';
+      e.reply = reply;
+      renderList(); renderDetail();
+      showToast('Reply sent!');
+    });
+  }
+
+  document.getElementById('main-content').innerHTML = `
+    <div class="enq-wrap">
+      <div class="enq-list" id="enq-list"></div>
+      <div id="enq-detail"></div>
+    </div>`;
+
+  renderList();
+  renderDetail();
+});
+</script>
+</body>
+</html>

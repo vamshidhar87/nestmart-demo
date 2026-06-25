@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — Padmavathi Traders</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      background: #f0f4f1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .admin-login-wrap {
+      width: 100%;
+      max-width: 420px;
+      padding: 24px 16px;
+    }
+    .admin-login-card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid var(--border-light);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 40px 36px;
+      position: relative;
+    }
+    .admin-card-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--bg-outer);
+      color: var(--text-muted);
+      font-size: 15px;
+      text-decoration: none;
+      transition: background .15s, color .15s;
+      line-height: 1;
+    }
+    .admin-card-close:hover {
+      background: #fde8e8;
+      color: #e11d48;
+    }
+    .admin-login-logo {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-bottom: 32px;
+    }
+    .admin-login-logo-text {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-dark);
+      line-height: 1.15;
+    }
+    .admin-login-logo-sub {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      margin-top: 3px;
+    }
+    .admin-login-heading {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+    .admin-login-sub {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    .admin-field {
+      margin-bottom: 16px;
+    }
+    .admin-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+    .admin-field input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      color: var(--text-dark);
+      font-size: 15px;
+      font-family: var(--font-body);
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .admin-field input:focus {
+      border-color: var(--green-mid);
+      box-shadow: 0 0 0 3px rgba(59,183,126,0.12);
+    }
+    .admin-error {
+      display: none;
+      background: #fff1f0;
+      border: 1px solid #ffccc7;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #cf1322;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+    .admin-submit-btn {
+      width: 100%;
+      padding: 13px 20px;
+      background: var(--green-dark);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-btn);
+      font-size: 15px;
+      font-weight: 700;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: background .18s, opacity .18s;
+      margin-top: 6px;
+    }
+    .admin-submit-btn:hover { background: #185a40; }
+    .admin-submit-btn:disabled { opacity: .65; cursor: default; }
+    .admin-back-link {
+      display: block;
+      text-align: center;
+      margin-top: 22px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .admin-back-link a {
+      color: var(--green-dark);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .admin-back-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="admin-login-wrap">
+  <div class="admin-login-card">
+
+    <a href="/" class="admin-card-close" title="Back to storefront">✕</a>
+
+    <div class="admin-login-logo">
+      <svg width="38" height="38" viewBox="0 0 56 56" style="flex-shrink:0">
+        <rect width="56" height="56" rx="13" fill="#1f6b4d"/>
+        <text x="28" y="34" text-anchor="middle" font-family="Georgia,serif" font-size="16" font-weight="800" fill="#fff" letter-spacing="0.5">TVR</text>
+        <path d="M13 43 Q28 50 43 43" stroke="#F59E0B" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="admin-login-logo-text">Padmavathi Traders</div>
+        <div class="admin-login-logo-sub">Admin Console</div>
+      </div>
+    </div>
+
+    <div class="admin-login-heading">Admin Sign In</div>
+    <div class="admin-login-sub">Enter your credentials to access the admin console.</div>
+
+    <div class="admin-error" id="admin-error">Incorrect username or password. Please try again.</div>
+
+    <form id="admin-login-form" onsubmit="handleAdminLogin(event)">
+      <div class="admin-field">
+        <label for="admin-username">Username</label>
+        <input type="text" id="admin-username" placeholder="Enter username" required autocomplete="username" autofocus>
+      </div>
+      <div class="admin-field">
+        <label for="admin-password">Password</label>
+        <div style="display:flex;border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;transition:border-color .15s,box-shadow .15s" id="pw-wrap">
+          <input type="password" id="admin-password" placeholder="Enter password" required autocomplete="current-password"
+            style="flex:1;border:none;outline:none;padding:11px 14px;font-size:15px;font-family:var(--font-body);color:var(--text-dark);background:#fff"
+            onfocus="document.getElementById('pw-wrap').style.borderColor='var(--green-mid)';document.getElementById('pw-wrap').style.boxShadow='0 0 0 3px rgba(59,183,126,0.12)'"
+            onblur="document.getElementById('pw-wrap').style.borderColor='';document.getElementById('pw-wrap').style.boxShadow=''">
+          <button type="button" id="pw-toggle" onclick="togglePw()"
+            style="padding:0 14px;border:none;background:transparent;color:#94A3B8;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Show</button>
+        </div>
+      </div>
+      <button type="submit" class="admin-submit-btn" id="admin-submit-btn">Sign In to Admin Console</button>
+    </form>
+
+    <div class="admin-back-link"><a href="/">← Back to Storefront</a></div>
+
+  </div>
+</div>
+
+<script src="/js/data.js"></script>
+<script src="/js/state.js"></script>
+<script>
+(function() {
+  NM.setAdmin(false);
+
+  function _d(s) {
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s))
+      .then(function(b) {
+        return Array.from(new Uint8Array(b)).map(function(x) {
+          return x.toString(16).padStart(2, '0');
+        }).join('');
+      });
+  }
+
+  var _x = ['8c6976e5b541','0415bde908bd','4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'];
+  var _y = ['8661669d5518','5becce1f1a75','3a219c15752306d318ef1a6b8d212ea624a487e7'];
+
+  window.handleAdminLogin = function(e) {
+    e.preventDefault();
+    var _a = (document.getElementById('admin-username').value || '').trim();
+    var _b = document.getElementById('admin-password').value || '';
+    var errEl = document.getElementById('admin-error');
+    var btn = document.getElementById('admin-submit-btn');
+    errEl.style.display = 'none';
+
+    Promise.all([_d(_a), _d(_b)]).then(function(r) {
+      if (r[0] === _x.join('') && r[1] === _y.join('')) {
+        btn.textContent = 'Signing in…';
+        btn.disabled = true;
+        NM.setAdmin(true);
+        NM.setUser({ name: 'Ravi Sharma', email: 'admin@padmavathitraders.com' });
+        setTimeout(function() { window.location.href = '/admin/dashboard'; }, 400);
+      } else {
+        errEl.style.display = 'block';
+        document.getElementById('admin-password').value = '';
+        document.getElementById('admin-password').focus();
+      }
+    });
+  };
+
+  window.togglePw = function() {
+    var inp = document.getElementById('admin-password');
+    var btn = document.getElementById('pw-toggle');
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Hide'; }
+    else { inp.type = 'password'; btn.textContent = 'Show'; }
+  };
+})();
+</script>
+
+</body>
+</html>

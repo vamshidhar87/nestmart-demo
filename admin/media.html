@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Library — Padmavathi Traders Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .upload-zone { border:2px dashed var(--border); border-radius:var(--radius-card); padding:40px 20px; text-align:center; cursor:pointer; transition:all .2s; margin-bottom:24px; }
+    .upload-zone:hover { border-color:var(--green-mid); background:var(--green-light); }
+    .media-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+    .media-tile { border-radius:var(--radius-card); overflow:hidden; border:1.5px solid var(--border-light); background:var(--bg-page); transition:box-shadow .15s; }
+    .media-tile:hover { box-shadow:var(--shadow-md); }
+    .media-thumb { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:32px; }
+  </style>
+</head>
+<body>
+<script src="/js/data.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/components.js"></script>
+<script>
+injectAdminShell('/admin/media');
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('admin-page-title').textContent = 'Media Library';
+
+  const MEDIA = [
+    { name:'faber-pencils.jpg', size:'245 KB', emoji:'✏️', inUse:true },
+    { name:'pilot-g2-pens.jpg', size:'189 KB', emoji:'🖊️', inUse:true },
+    { name:'classmate-notebooks.jpg', size:'312 KB', emoji:'📓', inUse:true },
+    { name:'camlin-watercolour.jpg', size:'428 KB', emoji:'🎨', inUse:true },
+    { name:'winsor-acrylic.jpg', size:'367 KB', emoji:'🖌️', inUse:true },
+    { name:'artline-marker.jpg', size:'156 KB', emoji:'✒️', inUse:true },
+    { name:'office-supplies.jpg', size:'298 KB', emoji:'📎', inUse:false },
+    { name:'chart-paper.jpg', size:'201 KB', emoji:'📃', inUse:false },
+    { name:'scotch-tape.jpg', size:'143 KB', emoji:'🔗', inUse:false },
+    { name:'kangaro-stapler.jpg', size:'178 KB', emoji:'🔧', inUse:false },
+    { name:'postit-notes.jpg', size:'234 KB', emoji:'📌', inUse:false },
+    { name:'kores-glue.jpg', size:'167 KB', emoji:'🔖', inUse:false }
+  ];
+
+  const totalMB = 1424;
+  const limitMB = 5120;
+  const pct = Math.round(totalMB / limitMB * 100);
+
+  document.getElementById('main-content').innerHTML = `
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div>
+            <div style="font-weight:600;color:var(--text-dark);margin-bottom:2px">Storage Usage</div>
+            <div style="font-size:13px;color:var(--text-muted)">${(totalMB/1024).toFixed(1)} GB of ${(limitMB/1024).toFixed(0)} GB used</div>
+          </div>
+          <div style="font-size:20px;font-weight:700;color:var(--green-dark)">${pct}%</div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" style="width:${pct}%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="upload-zone" id="upload-zone">
+      <div style="font-size:40px;margin-bottom:12px">📁</div>
+      <div style="font-weight:600;font-size:16px;color:var(--text-dark);margin-bottom:4px">Drag & drop files here</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Supports JPG, PNG, WebP, PDF — max 10 MB each</div>
+      <button class="btn btn-outline" id="browse-btn">Browse Files</button>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <h3 style="font-family:var(--font-heading);font-size:16px;font-weight:700;color:var(--text-dark)">All Media <span style="font-weight:400;color:var(--text-muted);font-size:14px">(${MEDIA.length} files)</span></h3>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm">All</button>
+        <button class="btn btn-ghost btn-sm">In Use</button>
+        <button class="btn btn-ghost btn-sm">Unused</button>
+      </div>
+    </div>
+
+    <div class="media-grid">
+      ${MEDIA.map(m => `
+        <div class="media-tile">
+          <div class="media-thumb" style="background:linear-gradient(135deg,#f0fdf4,#d1fae5)">${m.emoji}</div>
+          <div style="padding:10px 12px">
+            <div style="font-size:13px;font-weight:600;color:var(--text-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px">${m.name}</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+              <span style="font-size:12px;color:var(--text-muted)">${m.size}</span>
+              <span class="badge ${m.inUse?'badge-green':'badge-gray'}" style="font-size:11px;padding:2px 7px">${m.inUse?'In Use':'Unused'}</span>
+            </div>
+            <button class="btn btn-ghost btn-sm btn-full" onclick="navigator.clipboard.writeText('https://demo.padmavathi.com/media/${m.name}').then(()=>showToast('URL copied!')).catch(()=>showToast('URL copied!'))">Copy URL</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+
+  document.getElementById('browse-btn').addEventListener('click', () => showToast('Upload feature available in production'));
+  document.getElementById('upload-zone').addEventListener('dragover', e => e.preventDefault());
+  document.getElementById('upload-zone').addEventListener('drop', e => { e.preventDefault(); showToast('Upload feature available in production'); });
+});
+</script>
+</body>
+</html>

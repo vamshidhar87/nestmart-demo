@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Settings — Padmavathi Traders</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* ── Page scaffold ── */
+    .settings-page {
+      padding: 32px 0 72px;
+      background: var(--bg-outer);
+      min-height: calc(100vh - 120px);
+    }
+
+    .settings-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ── Sidebar (shared with dashboard) ── */
+    .acct-sidebar {
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      position: sticky;
+      top: 20px;
+    }
+
+    .acct-sidebar-header {
+      padding: 16px 18px 12px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--green-dark);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .acct-nav {
+      padding: 8px 0;
+    }
+
+    .acct-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-dark);
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      border-radius: 0;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+      position: relative;
+      font-family: var(--font-body);
+    }
+
+    .acct-nav-item:hover {
+      background: var(--green-light);
+      color: var(--green-dark);
+    }
+
+    .acct-nav-item.active {
+      background: var(--green-dark);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .acct-nav-item .nav-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      line-height: 1;
+      width: 20px;
+      text-align: center;
+    }
+
+    .acct-nav-section-label {
+      padding: 10px 18px 3px;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    .acct-nav-divider {
+      height: 1px;
+      background: var(--border-light);
+      margin: 6px 0;
+    }
+
+    .acct-nav-signout {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #ef4444;
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-family: var(--font-body);
+      transition: background 0.15s;
+      border-radius: 0;
+    }
+
+    .acct-nav-signout:hover {
+      background: #fee2e2;
+    }
+
+    /* ── Main content area ── */
+    .settings-main {
+      min-width: 0;
+    }
+
+    /* ── Tab panels ── */
+    .settings-panel {
+      display: none;
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 28px;
+    }
+
+    .settings-panel.active {
+      display: block;
+    }
+
+    .settings-panel-heading {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .settings-panel-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    /* ── Form fields ── */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      color: var(--text-dark);
+      background: #fff;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      box-sizing: border-box;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      border-color: var(--green-mid);
+      box-shadow: 0 0 0 3px rgba(59,183,126,.12);
+    }
+
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .form-full {
+      grid-column: 1 / -1;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    /* ── Buttons ── */
+    .btn-green {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      background: var(--green-dark);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-btn);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .btn-green:hover {
+      background: #185c41;
+    }
+
+    .btn-white {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      background: #fff;
+      color: var(--text-dark);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-btn);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .btn-white:hover {
+      border-color: var(--green-mid);
+      color: var(--green-dark);
+    }
+
+    .btn-ghost-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: #fff;
+      color: var(--green-dark);
+      border: 1.5px solid var(--green-dark);
+      border-radius: var(--radius-btn);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .btn-ghost-sm:hover {
+      background: var(--green-light);
+    }
+
+    .btn-danger-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: #fff;
+      color: var(--red);
+      border: 1.5px solid #fca5a5;
+      border-radius: var(--radius-btn);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .btn-danger-sm:hover {
+      background: #fee2e2;
+      border-color: var(--red);
+    }
+
+    .btn-muted-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: #fff;
+      color: var(--text-muted);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-btn);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .btn-muted-sm:hover {
+      color: var(--text-dark);
+      border-color: var(--text-muted);
+    }
+
+    /* ── Profile: Avatar card ── */
+    .avatar-card {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+      border: 1.5px solid var(--border-light);
+      border-radius: var(--radius-card);
+      background: #fff;
+      margin-bottom: 28px;
+    }
+
+    .avatar-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--green-dark);
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+      font-family: var(--font-heading);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .avatar-info {
+      flex: 1;
+    }
+
+    .avatar-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-dark);
+      font-family: var(--font-heading);
+      margin-bottom: 4px;
+    }
+
+    .avatar-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ── Address cards ── */
+    .addresses-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .addresses-title-group {}
+
+    .addresses-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .address-card {
+      background: #fff;
+      border: 1.5px solid var(--border-light);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      transition: box-shadow .18s;
+      position: relative;
+    }
+
+    .address-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .address-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .address-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .badge-pill {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .badge-school { background: #dcfce7; color: #166534; }
+    .badge-branch { background: #dbeafe; color: #1e40af; }
+    .badge-home   { background: #ffedd5; color: #9a3412; }
+
+    .badge-default {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: var(--green-dark);
+      color: #fff;
+    }
+
+    .address-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+
+    .address-line {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .address-coords {
+      font-size: 11px;
+      font-family: monospace;
+      color: var(--text-light);
+      margin-bottom: 14px;
+      background: var(--bg-outer);
+      padding: 5px 8px;
+      border-radius: 6px;
+    }
+
+    .address-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    /* ── GST banner ── */
+    .gst-banner {
+      background: linear-gradient(90deg, #dcfce7 0%, #f0fdf4 100%);
+      border: 1.5px solid #86efac;
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #166534;
+    }
+
+    .gst-banner-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #16a34a;
+      flex-shrink: 0;
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: .45; }
+    }
+
+    /* ── Security: bordered card ── */
+    .security-card {
+      border: 1.5px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 24px;
+      max-width: 480px;
+      margin-bottom: 20px;
+    }
+
+    .security-card-title {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 18px;
+    }
+
+    .security-2fa-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .security-2fa-icon {
+      font-size: 28px;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .security-2fa-info {
+      flex: 1;
+    }
+
+    .security-2fa-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .security-2fa-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ── Toggle switch ── */
+    .toggle-wrap {
+      position: relative;
+      width: 42px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .toggle-wrap input[type="checkbox"] {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: #cbd5e1;
+      border-radius: 24px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      left: 3px;
+      top: 3px;
+      transition: transform .2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+
+    .toggle-wrap input:checked + .toggle-slider {
+      background: var(--green-mid);
+    }
+
+    .toggle-wrap input:checked + .toggle-slider::before {
+      transform: translateX(18px);
+    }
+
+    .toggle-wrap input:focus-visible + .toggle-slider {
+      box-shadow: 0 0 0 3px rgba(59,183,126,.25);
+    }
+
+    /* ── Notifications ── */
+    .notif-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .notif-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .notif-row:last-child {
+      border-bottom: none;
+    }
+
+    .notif-icon {
+      font-size: 22px;
+      width: 32px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .notif-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .notif-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 2px;
+    }
+
+    .notif-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ── Modal overlay ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,.45);
+      z-index: 600;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: var(--radius-card);
+      box-shadow: 0 20px 60px rgba(0,0,0,.18);
+      width: 100%;
+      max-width: 480px;
+      padding: 28px;
+      animation: modalIn .2s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(.96) translateY(10px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .modal-title {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .modal-close-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all .15s;
+    }
+
+    .modal-close-btn:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: var(--red);
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 10px;
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-light);
+      justify-content: flex-end;
+    }
+
+    /* ── Confirm dialog ── */
+    .confirm-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,.5);
+      z-index: 700;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .confirm-overlay.open {
+      display: flex;
+    }
+
+    .confirm-box {
+      background: #fff;
+      border-radius: var(--radius-card);
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+      width: 100%;
+      max-width: 380px;
+      padding: 28px;
+      animation: modalIn .2s ease;
+    }
+
+    .confirm-icon {
+      font-size: 36px;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .confirm-title {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-dark);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .confirm-msg {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .confirm-btns {
+      display: flex;
+      gap: 10px;
+    }
+
+    .confirm-btns button {
+      flex: 1;
+    }
+
+    .btn-confirm-del {
+      padding: 10px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-btn);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .btn-confirm-del:hover {
+      background: #dc2626;
+    }
+
+    .btn-confirm-cancel {
+      padding: 10px;
+      background: #fff;
+      color: var(--text-muted);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-btn);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .btn-confirm-cancel:hover {
+      border-color: var(--text-muted);
+      color: var(--text-dark);
+    }
+
+    /* ── Mobile tab nav (hidden on desktop) ── */
+    .settings-mobile-tabs-wrap {
+      display: none;
+      margin-bottom: 16px;
+    }
+    .settings-mobile-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .settings-mobile-tab {
+      flex: 1 1 calc(50% - 6px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border-light);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-dark);
+      cursor: pointer;
+      white-space: nowrap;
+      background: #fff;
+      font-family: var(--font-body);
+      transition: background .15s, color .15s, border-color .15s;
+      text-decoration: none;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .settings-mobile-tab:hover {
+      background: var(--green-light);
+      color: var(--green-dark);
+      border-color: var(--green-mid);
+    }
+    .settings-mobile-tab.active {
+      background: var(--green-dark);
+      color: #fff;
+      border-color: var(--green-dark);
+      font-weight: 600;
+    }
+    .settings-mobile-tab-signout {
+      flex: 0 0 100%;
+      margin-top: 4px;
+      border-top: 1px solid var(--border-light);
+      color: #e53e3e;
+    }
+    .settings-mobile-tab-signout:hover {
+      background: #fff5f5;
+      color: #c53030;
+      border-color: #e53e3e;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .settings-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .acct-sidebar {
+        display: none;
+      }
+
+      .settings-mobile-tabs-wrap {
+        display: block;
+      }
+
+      .addresses-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .settings-page { padding: 16px 0 48px; }
+      .settings-panel { padding: 20px; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+      .avatar-card { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Address add/edit modal -->
+  <div class="modal-overlay" id="addr-modal" role="dialog" aria-modal="true" aria-labelledby="addr-modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="addr-modal-title">Add Address</div>
+        <button class="modal-close-btn" onclick="closeAddrModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="form-grid-2" style="margin-bottom:0">
+        <div class="form-group">
+          <label class="form-label" for="addr-name">Name / Label</label>
+          <input class="form-input" type="text" id="addr-name" placeholder="e.g. Head Office">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="addr-type">Type</label>
+          <select class="form-select" id="addr-type">
+            <option value="school">School</option>
+            <option value="branch">Branch</option>
+            <option value="home">Home</option>
+            <option value="office">Office</option>
+          </select>
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label" for="addr-text">Address</label>
+          <textarea class="form-input" id="addr-text" rows="3" placeholder="Street, locality, city, PIN…" style="resize:vertical;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-white" onclick="closeAddrModal()">Cancel</button>
+        <button class="btn-green" onclick="saveNewAddress()">Save Address</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete confirm dialog -->
+  <div class="confirm-overlay" id="confirm-dialog" role="alertdialog" aria-modal="true">
+    <div class="confirm-box">
+      <div class="confirm-icon">🗑️</div>
+      <div class="confirm-title">Delete this address?</div>
+      <div class="confirm-msg" id="confirm-msg">This address will be permanently removed from your account.</div>
+      <div class="confirm-btns">
+        <button class="btn-confirm-cancel" onclick="closeConfirm()">Cancel</button>
+        <button class="btn-confirm-del" id="confirm-ok-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/data.js"></script>
+  <script src="/js/state.js"></script>
+  <script src="/js/components.js"></script>
+  <script>
+    // ── Auth guard ──
+    (function() {
+      if (!NM.getUser()) {
+        window.location.href = '/login?demo=1';
+      }
+    })();
+
+    injectStorefrontShell();
+
+    // ── Tab routing ──
+    var TABS = ['profile', 'addresses', 'gst', 'security', 'notifications'];
+    var activeTab = 'profile';
+
+    function getInitialTab() {
+      var params = new URLSearchParams(window.location.search);
+      var t = params.get('tab');
+      if (t && TABS.indexOf(t) !== -1) return t;
+      return 'profile';
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      // Update sidebar
+      document.querySelectorAll('.acct-nav-item[data-tab]').forEach(function(el) {
+        el.classList.toggle('active', el.dataset.tab === tab);
+      });
+      // Update mobile tabs
+      document.querySelectorAll('.settings-mobile-tab').forEach(function(el) {
+        el.classList.toggle('active', el.dataset.tab === tab);
+      });
+      // Show/hide panels
+      document.querySelectorAll('.settings-panel').forEach(function(el) {
+        el.classList.toggle('active', el.id === 'panel-' + tab);
+      });
+      // Update URL without reload
+      var url = new URL(window.location.href);
+      if (tab === 'profile') {
+        url.searchParams.delete('tab');
+      } else {
+        url.searchParams.set('tab', tab);
+      }
+      history.replaceState(null, '', url.toString());
+    }
+
+    // ── Address state ──
+    var addresses = [
+      {
+        id: 1,
+        name: 'Bright Future School',
+        type: 'school',
+        badgeClass: 'badge-school',
+        badgeLabel: 'School',
+        address: '3-5-1089/11, Narayanguda, Hyderabad 500029',
+        lat: '17.4030° N',
+        lng: '78.4895° E',
+        isDefault: true
+      },
+      {
+        id: 2,
+        name: 'BFS Annexe Campus',
+        type: 'branch',
+        badgeClass: 'badge-branch',
+        badgeLabel: 'Branch',
+        address: 'Plot 22, Himayatnagar, Hyderabad 500029',
+        lat: '17.4045° N',
+        lng: '78.4830° E',
+        isDefault: false
+      },
+      {
+        id: 3,
+        name: 'Aarav Mehta (Home)',
+        type: 'home',
+        badgeClass: 'badge-home',
+        badgeLabel: 'Home',
+        address: 'Flat 4B, Lodha Bellezza, Kukatpally 500072',
+        lat: '17.4920° N',
+        lng: '78.3990° E',
+        isDefault: false
+      }
+    ];
+
+    var nextAddrId = 10;
+    var pendingDeleteId = null;
+
+    // ── Render ──
+    function renderPage() {
+      var user = NM.getUser() || { name: 'Aarav Mehta', email: 'aarav@brightfuture.edu' };
+      var initials = user.name.split(' ').map(function(w) { return w[0]; }).join('').slice(0, 2).toUpperCase();
+
+      var main = document.getElementById('main-content');
+      if (!main) return;
+
+      main.innerHTML = [
+        '<div class="settings-page">',
+          '<div class="container">',
+            renderMobileTabs(),
+            '<div class="settings-layout">',
+              renderSidebar(user, initials),
+              '<div class="settings-main">',
+                renderProfilePanel(user, initials),
+                renderAddressesPanel(),
+                renderGstPanel(),
+                renderSecurityPanel(),
+                renderNotifPanel(),
+              '</div>',
+            '</div>',
+          '</div>',
+        '</div>'
+      ].join('');
+
+      // Wire up sidebar items
+      document.querySelectorAll('.acct-nav-item[data-tab]').forEach(function(el) {
+        el.addEventListener('click', function() { switchTab(el.dataset.tab); });
+      });
+
+      // Wire up mobile tabs
+      document.querySelectorAll('.settings-mobile-tab[data-tab]').forEach(function(el) {
+        el.addEventListener('click', function() { switchTab(el.dataset.tab); });
+      });
+
+      // Activate initial tab
+      switchTab(getInitialTab());
+
+      // Wire profile form
+      var profileForm = document.getElementById('profile-form');
+      if (profileForm) {
+        profileForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          showToast('Profile updated', 'success');
+        });
+      }
+
+      // Wire security form
+      var secForm = document.getElementById('security-form');
+      if (secForm) {
+        secForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          var np = document.getElementById('new-password').value;
+          var cp = document.getElementById('confirm-password').value;
+          if (!np) { showToast('Enter a new password', 'error'); return; }
+          if (np !== cp) { showToast('Passwords do not match', 'error'); return; }
+          if (np.length < 8) { showToast('Password must be at least 8 characters', 'error'); return; }
+          showToast('Password updated', 'success');
+          secForm.reset();
+        });
+      }
+
+      // Wire GST form
+      var gstForm = document.getElementById('gst-form');
+      if (gstForm) {
+        gstForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          showToast('Business details saved', 'success');
+        });
+      }
+    }
+
+    function renderSidebar(user, initials) {
+      var activityItems = [
+        { href: '/account/dashboard',            icon: '📋', label: 'My Quotes' },
+        { href: '/account/dashboard?tab=orders', icon: '📦', label: 'My Orders' },
+        { href: '/wishlist',                     icon: '♡',  label: 'Wishlist'  }
+      ];
+      var settingsItems = [
+        { tab: 'profile',       icon: '👤', label: 'Profile'        },
+        { tab: 'addresses',     icon: '📍', label: 'Addresses'       },
+        { tab: 'gst',           icon: '🧾', label: 'Business &amp; GST' },
+        { tab: 'security',      icon: '🔐', label: 'Security'        },
+        { tab: 'notifications', icon: '🔔', label: 'Notifications'   }
+      ];
+
+      return [
+        '<aside class="acct-sidebar">',
+          '<div class="acct-sidebar-header">My Account</div>',
+          '<nav class="acct-nav">',
+            activityItems.map(function(item) {
+              return '<a href="' + item.href + '" class="acct-nav-item">' +
+                '<span class="nav-icon">' + item.icon + '</span>' +
+                item.label +
+              '</a>';
+            }).join(''),
+            '<div class="acct-nav-section-label">Settings</div>',
+            settingsItems.map(function(item) {
+              return '<button class="acct-nav-item" data-tab="' + item.tab + '" type="button">' +
+                '<span class="nav-icon">' + item.icon + '</span>' +
+                item.label +
+              '</button>';
+            }).join(''),
+          '</nav>',
+          '<div class="acct-nav-divider"></div>',
+          '<button class="acct-nav-signout" onclick="NM.logout()" type="button">' +
+            '<span style="font-size:15px">⎋</span> Sign Out' +
+          '</button>',
+        '</aside>'
+      ].join('');
+    }
+
+    function renderMobileTabs() {
+      var activityItems = [
+        { href: '/account/dashboard',            icon: '📋', label: 'My Quotes' },
+        { href: '/account/dashboard?tab=orders', icon: '📦', label: 'My Orders' },
+        { href: '/wishlist',                     icon: '♡',  label: 'Wishlist'  }
+      ];
+      var tabs = [
+        { tab: 'profile',       icon: '👤', label: 'Profile'     },
+        { tab: 'addresses',     icon: '📍', label: 'Addresses'    },
+        { tab: 'gst',           icon: '🧾', label: 'GST'          },
+        { tab: 'security',      icon: '🔐', label: 'Security'     },
+        { tab: 'notifications', icon: '🔔', label: 'Notifications'}
+      ];
+
+      return '<div class="settings-mobile-tabs-wrap">' +
+        '<div class="settings-mobile-tabs" role="tablist">' +
+          activityItems.map(function(item) {
+            return '<a href="' + item.href + '" class="settings-mobile-tab">' +
+              '<span style="font-size:15px;line-height:1">' + item.icon + '</span>' +
+              item.label +
+            '</a>';
+          }).join('') +
+          tabs.map(function(t) {
+            return '<button class="settings-mobile-tab" data-tab="' + t.tab + '" type="button" role="tab">' +
+              '<span style="font-size:15px;line-height:1">' + t.icon + '</span>' +
+              t.label +
+            '</button>';
+          }).join('') +
+          '<button class="settings-mobile-tab settings-mobile-tab-signout" onclick="NM.logout()" type="button">' +
+            '<span style="font-size:15px;line-height:1">⎋</span> Sign Out' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+    }
+
+    // ── PROFILE PANEL ──
+    function renderProfilePanel(user, initials) {
+      return [
+        '<div class="settings-panel" id="panel-profile" role="tabpanel">',
+          '<div class="settings-panel-heading">Profile</div>',
+          '<div class="settings-panel-sub">Manage your personal information.</div>',
+
+          '<div class="avatar-card">',
+            '<div class="avatar-circle" id="avatar-circle">' + initials + '</div>',
+            '<div class="avatar-info">',
+              '<div class="avatar-name" id="avatar-display-name">' + escHtml(user.name) + '</div>',
+              '<div class="avatar-meta">Member since March 2024 · 12 orders</div>',
+            '</div>',
+            '<button class="btn-ghost-sm" type="button" onclick="showToast(\'Photo upload coming soon\', \'info\')">Change photo</button>',
+          '</div>',
+
+          '<form id="profile-form" autocomplete="off">',
+            '<div class="form-grid-2">',
+              '<div class="form-group">',
+                '<label class="form-label" for="profile-name">Full name</label>',
+                '<input class="form-input" type="text" id="profile-name" value="' + escHtml(user.name) + '" autocomplete="name" required>',
+              '</div>',
+              '<div class="form-group">',
+                '<label class="form-label" for="profile-role">Display role</label>',
+                '<input class="form-input" type="text" id="profile-role" value="Procurement Lead" autocomplete="organization-title">',
+              '</div>',
+              '<div class="form-group">',
+                '<label class="form-label" for="profile-email">Email</label>',
+                '<input class="form-input" type="email" id="profile-email" value="' + escHtml(user.email || 'aarav@brightfuture.edu') + '" autocomplete="email" required>',
+              '</div>',
+              '<div class="form-group">',
+                '<label class="form-label" for="profile-phone">Phone (WhatsApp)</label>',
+                '<input class="form-input" type="tel" id="profile-phone" value="+91 98480 12345" autocomplete="tel">',
+              '</div>',
+            '</div>',
+            '<div class="form-actions">',
+              '<button class="btn-green" type="submit">Save changes</button>',
+              '<button class="btn-white" type="reset">Cancel</button>',
+            '</div>',
+          '</form>',
+
+        '</div>'
+      ].join('');
+    }
+
+    // ── ADDRESSES PANEL ──
+    function renderAddressesPanel() {
+      return [
+        '<div class="settings-panel" id="panel-addresses" role="tabpanel">',
+          renderAddressesContent(),
+        '</div>'
+      ].join('');
+    }
+
+    function renderAddressesContent() {
+      var cards = addresses.map(function(addr) {
+        return [
+          '<div class="address-card" id="addr-card-' + addr.id + '">',
+            '<div class="address-card-top">',
+              '<div class="address-badges">',
+                '<span class="badge-pill ' + addr.badgeClass + '">' + addr.badgeLabel + '</span>',
+                addr.isDefault ? '<span class="badge-default">✓ Default</span>' : '',
+              '</div>',
+            '</div>',
+            '<div class="address-name">' + escHtml(addr.name) + '</div>',
+            '<div class="address-line">' + escHtml(addr.address) + '</div>',
+            '<div class="address-coords">' + addr.lat + ', ' + addr.lng + '</div>',
+            '<div class="address-actions">',
+              '<button class="btn-ghost-sm" type="button" onclick="editAddress(' + addr.id + ')">Edit</button>',
+              addr.isDefault
+                ? '<button class="btn-muted-sm" type="button" disabled style="opacity:.4;cursor:default">✓ Default</button>'
+                : '<button class="btn-muted-sm" type="button" onclick="setDefaultAddress(' + addr.id + ')">Set default</button>',
+              '<button class="btn-danger-sm" type="button" onclick="confirmDeleteAddress(' + addr.id + ')">Delete</button>',
+            '</div>',
+          '</div>'
+        ].join('');
+      }).join('');
+
+      return [
+        '<div class="addresses-header">',
+          '<div class="addresses-title-group">',
+            '<div class="settings-panel-heading">Saved Addresses</div>',
+            '<div class="settings-panel-sub" style="margin-bottom:0">Stored for faster delivery.</div>',
+          '</div>',
+          '<button class="btn-green" type="button" onclick="openAddrModal()">+ Add address</button>',
+        '</div>',
+        '<div class="addresses-grid" id="addresses-grid">',
+          cards,
+        '</div>'
+      ].join('');
+    }
+
+    function refreshAddressPanel() {
+      var panel = document.getElementById('panel-addresses');
+      if (panel) panel.innerHTML = renderAddressesContent();
+    }
+
+    function setDefaultAddress(id) {
+      addresses.forEach(function(a) { a.isDefault = (a.id === id); });
+      var addr = addresses.find(function(a) { return a.id === id; });
+      showToast((addr ? addr.name : 'Address') + ' set as default', 'success');
+      refreshAddressPanel();
+    }
+
+    function confirmDeleteAddress(id) {
+      var addr = addresses.find(function(a) { return a.id === id; });
+      if (!addr) return;
+      pendingDeleteId = id;
+      var msg = document.getElementById('confirm-msg');
+      if (msg) msg.textContent = '"' + addr.name + '" will be permanently removed from your account.';
+      var okBtn = document.getElementById('confirm-ok-btn');
+      if (okBtn) {
+        okBtn.onclick = function() {
+          deleteAddress(pendingDeleteId);
+          closeConfirm();
+        };
+      }
+      document.getElementById('confirm-dialog').classList.add('open');
+    }
+
+    function deleteAddress(id) {
+      var addr = addresses.find(function(a) { return a.id === id; });
+      addresses = addresses.filter(function(a) { return a.id !== id; });
+      if (addr && addr.isDefault && addresses.length > 0) {
+        addresses[0].isDefault = true;
+      }
+      showToast('Address removed', 'info');
+      refreshAddressPanel();
+    }
+
+    function closeConfirm() {
+      document.getElementById('confirm-dialog').classList.remove('open');
+      pendingDeleteId = null;
+    }
+
+    function openAddrModal() {
+      document.getElementById('addr-name').value = '';
+      document.getElementById('addr-type').value = 'school';
+      document.getElementById('addr-text').value = '';
+      document.getElementById('addr-modal-title').textContent = 'Add Address';
+      document.getElementById('addr-modal').classList.add('open');
+    }
+
+    function editAddress(id) {
+      var addr = addresses.find(function(a) { return a.id === id; });
+      if (!addr) return;
+      document.getElementById('addr-name').value = addr.name;
+      document.getElementById('addr-type').value = addr.type;
+      document.getElementById('addr-text').value = addr.address;
+      document.getElementById('addr-modal-title').textContent = 'Edit Address';
+      document.getElementById('addr-modal').classList.add('open');
+    }
+
+    function closeAddrModal() {
+      document.getElementById('addr-modal').classList.remove('open');
+    }
+
+    function saveNewAddress() {
+      var name = document.getElementById('addr-name').value.trim();
+      var type = document.getElementById('addr-type').value;
+      var text = document.getElementById('addr-text').value.trim();
+      if (!name) { showToast('Enter a name or label', 'error'); return; }
+      if (!text)  { showToast('Enter the address', 'error'); return; }
+
+      var typeMap = {
+        school: { badgeClass: 'badge-school', badgeLabel: 'School' },
+        branch: { badgeClass: 'badge-branch', badgeLabel: 'Branch' },
+        home:   { badgeClass: 'badge-home',   badgeLabel: 'Home'   },
+        office: { badgeClass: 'badge-branch',  badgeLabel: 'Office' }
+      };
+      var t = typeMap[type] || { badgeClass: 'badge-branch', badgeLabel: 'Office' };
+
+      addresses.push({
+        id: nextAddrId++,
+        name: name,
+        type: type,
+        badgeClass: t.badgeClass,
+        badgeLabel: t.badgeLabel,
+        address: text,
+        lat: '—',
+        lng: '—',
+        isDefault: false
+      });
+
+      closeAddrModal();
+      showToast('Address saved', 'success');
+      refreshAddressPanel();
+    }
+
+    // Close modal on overlay click
+    document.getElementById('addr-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeAddrModal();
+    });
+    document.getElementById('confirm-dialog').addEventListener('click', function(e) {
+      if (e.target === this) closeConfirm();
+    });
+
+    // ── GST PANEL ──
+    function renderGstPanel() {
+      return [
+        '<div class="settings-panel" id="panel-gst" role="tabpanel">',
+          '<div class="settings-panel-heading">Business & GST</div>',
+          '<div class="settings-panel-sub">Add your firm\'s tax details for GST-compliant invoices.</div>',
+
+          '<div class="gst-banner">',
+            '<span style="font-size:18px">🧾</span>',
+            '<div style="flex:1">',
+              '<strong>GST verified</strong> · Your GSTIN was validated on 14 Mar 2024.',
+            '</div>',
+            '<div class="gst-banner-dot"></div>',
+            '<span style="font-weight:600">Active</span>',
+          '</div>',
+
+          '<form id="gst-form" autocomplete="off">',
+            '<div class="form-grid-2">',
+              '<div class="form-group">',
+                '<label class="form-label" for="gst-bizname">Registered business name</label>',
+                '<input class="form-input" type="text" id="gst-bizname" value="Bright Future School">',
+              '</div>',
+              '<div class="form-group">',
+                '<label class="form-label" for="gst-number">GSTIN</label>',
+                '<input class="form-input" type="text" id="gst-number" value="36ABCDE1234F1Z5" style="font-family:monospace;letter-spacing:.5px" maxlength="15">',
+              '</div>',
+              '<div class="form-group">',
+                '<label class="form-label" for="gst-biztype">Business type</label>',
+                '<select class="form-select" id="gst-biztype">',
+                  '<option value="edu" selected>Educational Institution</option>',
+                  '<option value="pvt">Private Company</option>',
+                  '<option value="govt">Government Office</option>',
+                  '<option value="sole">Sole Proprietor</option>',
+                '</select>',
+              '</div>',
+              '<div class="form-group">',
+                '<label class="form-label" for="gst-payterms">Default payment terms</label>',
+                '<select class="form-select" id="gst-payterms">',
+                  '<option value="net15" selected>Net 15</option>',
+                  '<option value="net30">Net 30</option>',
+                  '<option value="cod">Pay on delivery</option>',
+                  '<option value="advance">Advance</option>',
+                '</select>',
+              '</div>',
+              '<div class="form-group form-full">',
+                '<label class="form-label" for="gst-billingaddr">Billing address</label>',
+                '<input class="form-input" type="text" id="gst-billingaddr" value="3-5-1089/11, Narayanguda, Hyderabad 500029">',
+              '</div>',
+              '<div class="form-group form-full">',
+                '<label class="form-label" for="gst-contact">Procurement contact</label>',
+                '<input class="form-input" type="email" id="gst-contact" value="accounts@brightfuture.edu">',
+              '</div>',
+            '</div>',
+            '<div class="form-actions">',
+              '<button class="btn-green" type="submit">Save business details</button>',
+            '</div>',
+          '</form>',
+
+        '</div>'
+      ].join('');
+    }
+
+    // ── SECURITY PANEL ──
+    function renderSecurityPanel() {
+      return [
+        '<div class="settings-panel" id="panel-security" role="tabpanel">',
+          '<div class="settings-panel-heading">Security</div>',
+          '<div class="settings-panel-sub">Keep your account safe.</div>',
+
+          '<div class="security-card">',
+            '<div class="security-card-title">Change password</div>',
+            '<form id="security-form" autocomplete="off">',
+              '<div style="display:flex;flex-direction:column;gap:16px">',
+                '<div class="form-group">',
+                  '<label class="form-label" for="current-password">Current password</label>',
+                  '<input class="form-input" type="password" id="current-password" autocomplete="current-password" placeholder="••••••••">',
+                '</div>',
+                '<div class="form-group">',
+                  '<label class="form-label" for="new-password">New password</label>',
+                  '<input class="form-input" type="password" id="new-password" autocomplete="new-password" placeholder="Min. 8 characters">',
+                '</div>',
+                '<div class="form-group">',
+                  '<label class="form-label" for="confirm-password">Confirm new password</label>',
+                  '<input class="form-input" type="password" id="confirm-password" autocomplete="new-password" placeholder="Repeat new password">',
+                '</div>',
+              '</div>',
+              '<div class="form-actions">',
+                '<button class="btn-green" type="submit">Update password</button>',
+              '</div>',
+            '</form>',
+          '</div>',
+
+          '<div class="security-card">',
+            '<div class="security-2fa-row">',
+              '<div class="security-2fa-icon">🔐</div>',
+              '<div class="security-2fa-info">',
+                '<div class="security-2fa-title">Two-factor authentication</div>',
+                '<div class="security-2fa-desc">Add an OTP step when signing in.</div>',
+              '</div>',
+              '<label class="toggle-wrap" aria-label="Two-factor authentication">',
+                '<input type="checkbox" checked id="toggle-2fa" onchange="handleSecurityToggle(this)">',
+                '<span class="toggle-slider"></span>',
+              '</label>',
+            '</div>',
+          '</div>',
+
+        '</div>'
+      ].join('');
+    }
+
+    function handleSecurityToggle(el) {
+      showToast(el.checked ? '2FA enabled' : '2FA disabled', el.checked ? 'success' : 'info');
+    }
+
+    // ── NOTIFICATIONS PANEL ──
+    var notifState = {
+      quotes:        true,
+      orders:        true,
+      whatsapp:      true,
+      promotions:    false,
+      newsletter:    false
+    };
+
+    function renderNotifPanel() {
+      var rows = [
+        { key: 'quotes',     icon: '📋', label: 'Quote updates',      desc: 'When a quote is ready, revised, or expiring'         },
+        { key: 'orders',     icon: '📦', label: 'Order status',        desc: 'Dispatch, out-for-delivery & delivered'              },
+        { key: 'whatsapp',   icon: '✆',  label: 'WhatsApp alerts',     desc: 'Quotes & delivery updates on WhatsApp'              },
+        { key: 'promotions', icon: '🏷️', label: 'Offers & promotions', desc: 'Seasonal deals and bulk discounts'                  },
+        { key: 'newsletter', icon: '📧', label: 'Newsletter',           desc: 'New arrivals and stationery tips, monthly'          }
+      ];
+
+      var rowsHtml = rows.map(function(r) {
+        var checked = notifState[r.key] ? 'checked' : '';
+        return [
+          '<div class="notif-row">',
+            '<div class="notif-icon">' + r.icon + '</div>',
+            '<div class="notif-info">',
+              '<div class="notif-label">' + r.label + '</div>',
+              '<div class="notif-desc">' + r.desc + '</div>',
+            '</div>',
+            '<label class="toggle-wrap" aria-label="' + r.label + '">',
+              '<input type="checkbox" ' + checked + ' data-notif-key="' + r.key + '" onchange="handleNotifToggle(this)">',
+              '<span class="toggle-slider"></span>',
+            '</label>',
+          '</div>'
+        ].join('');
+      }).join('');
+
+      return [
+        '<div class="settings-panel" id="panel-notifications" role="tabpanel">',
+          '<div class="settings-panel-heading">Notifications</div>',
+          '<div class="settings-panel-sub">Choose how we keep you posted.</div>',
+          '<div class="notif-list">',
+            rowsHtml,
+          '</div>',
+        '</div>'
+      ].join('');
+    }
+
+    function handleNotifToggle(el) {
+      var key = el.dataset.notifKey;
+      notifState[key] = el.checked;
+      var labels = {
+        quotes:     'Quote updates',
+        orders:     'Order status',
+        whatsapp:   'WhatsApp alerts',
+        promotions: 'Offers & promotions',
+        newsletter: 'Newsletter'
+      };
+      var label = labels[key] || key;
+      showToast(label + (el.checked ? ' turned on' : ' turned off'), el.checked ? 'success' : 'info');
+    }
+
+    // ── Utility ──
+    function escHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ── Boot ──
+    renderPage();
+  </script>
+</body>
+</html>

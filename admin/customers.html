@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customers — Padmavathi Traders Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<script src="/js/data.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/components.js"></script>
+<script>
+injectAdminShell('/admin/customers');
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('admin-page-title').textContent = 'Customers';
+
+  let activeFilter = 'all';
+  let searchQuery = '';
+
+  const DATA = [
+    { name:'Aarav Mehta',   email:'aarav@brightfuture.edu',       initials:'AM', avBg:'#1f6b4d', type:'business', org:'Bright Future School',   gst:'36ABCDE1234F1Z5', quotes:6, orders:4, joined:'Jan 2026', verified:true },
+    { name:'Kabir Shah',    email:'kabir@shahstationers.in',       initials:'KS', avBg:'#ea580c', type:'business', org:'Shah Stationers',         gst:'36KSHAH9876P1Z2', quotes:8, orders:5, joined:'Mar 2026', verified:true },
+    { name:'Priya Nair',    email:'priya.nair@gmail.com',          initials:'PN', avBg:'#db2777', type:'personal', org:'',                        gst:'—',               quotes:5, orders:2, joined:'Feb 2026', verified:true },
+    { name:'Meera Iyer',    email:'meera@stannes.edu',             initials:'MI', avBg:'#7c3aed', type:'business', org:"St. Anne's College",      gst:'36STANN4567Q1Z8', quotes:3, orders:1, joined:'Feb 2026', verified:true },
+    { name:'Dev Patel',     email:'dev@patelsons.in',              initials:'DP', avBg:'#0e7490', type:'business', org:'Patel & Sons Traders',    gst:'24PATEL3344R1Z9', quotes:6, orders:3, joined:'Apr 2026', verified:true },
+    { name:'Rahul Verma',   email:'rahul@vermaarch.in',            initials:'RV', avBg:'#0891b2', type:'business', org:'Verma Architects',        gst:'36VERMA1122S1Z4', quotes:4, orders:1, joined:'Mar 2026', verified:true },
+    { name:'Anjali Rao',    email:'anjali.rao@gmail.com',          initials:'AR', avBg:'#9333ea', type:'personal', org:'',                        gst:'—',               quotes:1, orders:0, joined:'May 2026', verified:true },
+    { name:'Sara Khan',     email:'sara@littlestars.in',           initials:'SK', avBg:'#2563eb', type:'business', org:'Little Stars Preschool',  gst:'36LSTAR7788T1Z1', quotes:2, orders:0, joined:'Apr 2026', verified:false },
+  ];
+
+  const FILTER_DEFS = [['all','All'],['business','Business / Institution'],['personal','Personal']];
+
+  function getCounts() {
+    const c = { all:DATA.length, business:0, personal:0 };
+    DATA.forEach(d => c[d.type]++);
+    return c;
+  }
+
+  function filtered() {
+    return DATA.filter(d => {
+      const matchFilter = activeFilter === 'all' || d.type === activeFilter;
+      const s = searchQuery.toLowerCase();
+      return matchFilter && (!s || d.name.toLowerCase().includes(s) || d.email.toLowerCase().includes(s) || d.org.toLowerCase().includes(s));
+    });
+  }
+
+  function render() {
+    const c = getCounts();
+    const rows = filtered();
+
+    document.getElementById('main-content').innerHTML = `
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px">
+        <div style="font-size:13px;color:#64748B;margin-top:3px">318 customers &middot; 41 business / institution &middot; 277 personal</div>
+        <div style="display:flex;align-items:center;gap:9px;border:1px solid #e6eaee;background:#fff;border-radius:10px;padding:8px 12px;min-width:220px">
+          <span style="color:#94A3B8;font-size:14px">&#128269;</span>
+          <input id="c-search" placeholder="Search by name, email&hellip;" value="${searchQuery.replace(/"/g,'&quot;')}"
+            style="border:none;outline:none;font-size:13px;font-family:inherit;background:transparent;color:#1E293B;width:100%">
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+        ${FILTER_DEFS.map(([k, label]) => {
+          const on = activeFilter === k;
+          return `<span data-filter="${k}" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:99px;cursor:pointer;border:1px solid ${on?'#1f6b4d':'#e6eaee'};background:${on?'#1f6b4d':'#fff'};color:${on?'#fff':'#475569'}">
+            ${label} <span style="font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;background:${on?'rgba(255,255,255,.2)':'#f1f5f9'};color:${on?'#fff':'#94A3B8'}">${c[k]}</span>
+          </span>`;
+        }).join('')}
+      </div>
+
+      <div style="background:#fff;border:1px solid #eef1f4;border-radius:16px;overflow:hidden">
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:820px">
+            <thead>
+              <tr style="background:#f8fafc">
+                <th style="text-align:left;padding:12px 18px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Customer</th>
+                <th style="text-align:left;padding:12px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Type</th>
+                <th style="text-align:left;padding:12px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">GSTIN</th>
+                <th style="text-align:center;padding:12px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Quotes</th>
+                <th style="text-align:center;padding:12px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Orders</th>
+                <th style="text-align:left;padding:12px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Joined</th>
+                <th style="text-align:left;padding:12px 18px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map(cu => {
+                const biz = cu.type === 'business';
+                const typeStyle = biz
+                  ? 'display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;color:#1e40af;background:#eff6ff;border:1px solid #bfdbfe'
+                  : 'display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;color:#475569;background:#f1f5f9;border:1px solid #e2e8f0';
+                const verStyle = cu.verified
+                  ? 'display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;color:#166534;background:#f0fdf4;border:1px solid #cdeede'
+                  : 'display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;color:#92400e;background:#fffbeb;border:1px solid #fde68a';
+                return `<tr style="border-bottom:1px solid #f6f8fa">
+                  <td style="padding:12px 18px">
+                    <div style="display:flex;align-items:center;gap:11px">
+                      <div style="width:36px;height:36px;border-radius:50%;background:${cu.avBg};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${cu.initials}</div>
+                      <div>
+                        <div style="font-size:13px;font-weight:600;color:#1E293B">${cu.name}</div>
+                        <div style="font-size:11px;color:#94A3B8">${cu.email}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="padding:12px 14px">
+                    <span style="${typeStyle}">${biz ? 'Business' : 'Personal'}</span>
+                    ${biz && cu.org ? `<div style="font-size:11px;color:#94A3B8;margin-top:3px">${cu.org}</div>` : ''}
+                  </td>
+                  <td style="padding:12px 14px"><span style="font-size:11px;color:#475569;font-family:ui-monospace,monospace">${cu.gst}</span></td>
+                  <td style="padding:12px 14px;text-align:center;font-weight:700;color:#0f172a;font-family:'Bricolage Grotesque',sans-serif">${cu.quotes}</td>
+                  <td style="padding:12px 14px;text-align:center;font-weight:700;color:#1f6b4d;font-family:'Bricolage Grotesque',sans-serif">${cu.orders}</td>
+                  <td style="padding:12px 14px;color:#64748B">${cu.joined}</td>
+                  <td style="padding:12px 18px"><span style="${verStyle}">${cu.verified ? '&#9679; Verified' : '&#9675; Unverified'}</span></td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-top:1px solid #eef1f4">
+          <span style="font-size:12px;color:#94A3B8">Showing ${rows.length} of 318 customers</span>
+          <span style="font-size:12px;color:#94A3B8">Personal data is access-controlled per DPDP Act 2023.</span>
+        </div>
+      </div>`;
+
+    document.querySelectorAll('[data-filter]').forEach(el =>
+      el.addEventListener('click', () => { activeFilter = el.dataset.filter; render(); })
+    );
+    const si = document.getElementById('c-search');
+    if (si) si.addEventListener('input', e => { searchQuery = e.target.value; render(); });
+  }
+
+  render();
+});
+</script>
+</body>
+</html>

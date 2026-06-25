@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quotes — Padmavathi Traders Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<script src="/js/data.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/components.js"></script>
+<script>
+injectAdminShell('/admin/quotes');
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('admin-page-title').textContent = 'Quotes';
+
+  let activeFilter = 'all';
+  let searchQuery = '';
+
+  const STATUS = {
+    pending:            { label:'Needs review',        c:'#92400e', bg:'#fffbeb', bd:'#fde68a', group:'pending' },
+    pdf_sent:           { label:'Awaiting customer',   c:'#1e40af', bg:'#eff6ff', bd:'#bfdbfe', group:'awaiting' },
+    revision_requested: { label:'Revision requested',  c:'#6d28d9', bg:'#f5f3ff', bd:'#e9d5ff', group:'revision' },
+    customer_approved:  { label:'Approved',            c:'#166534', bg:'#f0fdf4', bd:'#cdeede', group:'approved' },
+    rejected:           { label:'Rejected',            c:'#991b1b', bg:'#fef2f2', bd:'#fecaca', group:'rejected' },
+  };
+
+  const DATA = [
+    { id:'QT-2041', name:'Meera Iyer',   org:"St. Anne's College",    initials:'MI', avBg:'#7c3aed', items:14, total:'₹—',      rev:1, status:'pending',            date:'2 hr ago' },
+    { id:'QT-2040', name:'Aarav Mehta',  org:'Bright Future School',  initials:'AM', avBg:'#1f6b4d', items:8,  total:'₹12,480', rev:1, status:'pdf_sent',           date:'Today, 9:20' },
+    { id:'QT-2038', name:'Rahul Verma',  org:'Verma Architects',      initials:'RV', avBg:'#0891b2', items:11, total:'₹23,410', rev:2, status:'revision_requested', date:'Yesterday' },
+    { id:'QT-2035', name:'Aarav Mehta',  org:'Bright Future School',  initials:'AM', avBg:'#1f6b4d', items:3,  total:'₹9,234',  rev:2, status:'customer_approved',  date:'11 Jun 2026' },
+    { id:'QT-2034', name:'Priya Nair',   org:'Freelance artist',      initials:'PN', avBg:'#db2777', items:5,  total:'₹4,820',  rev:1, status:'pending',            date:'10 Jun 2026' },
+    { id:'QT-2031', name:'Kabir Shah',   org:'Shah Stationers',       initials:'KS', avBg:'#ea580c', items:22, total:'₹74,600', rev:3, status:'pdf_sent',           date:'9 Jun 2026' },
+    { id:'QT-2029', name:'Sara Khan',    org:'Little Stars Preschool',initials:'SK', avBg:'#2563eb', items:6,  total:'₹6,150',  rev:1, status:'rejected',           date:'8 Jun 2026' },
+    { id:'QT-2027', name:'Dev Patel',    org:'Patel & Sons Traders',  initials:'DP', avBg:'#1f6b4d', items:9,  total:'₹18,900', rev:2, status:'customer_approved',  date:'7 Jun 2026' },
+  ];
+
+  const FILTER_DEFS = [
+    ['all','All'],['pending','Needs review'],['awaiting','Awaiting customer'],
+    ['revision','Revision'],['approved','Approved'],['rejected','Rejected']
+  ];
+
+  function getCounts() {
+    const c = { all:DATA.length, pending:0, awaiting:0, revision:0, approved:0, rejected:0 };
+    DATA.forEach(d => c[STATUS[d.status].group]++);
+    return c;
+  }
+
+  function filtered() {
+    return DATA.filter(d => {
+      const matchFilter = activeFilter === 'all' || STATUS[d.status].group === activeFilter;
+      const s = searchQuery.toLowerCase();
+      return matchFilter && (!s || d.id.toLowerCase().includes(s) || d.name.toLowerCase().includes(s) || d.org.toLowerCase().includes(s));
+    });
+  }
+
+  function render() {
+    const c = getCounts();
+    const rows = filtered();
+
+    document.getElementById('main-content').innerHTML = `
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px">
+        <div>
+          <div style="font-size:13px;color:#64748B;margin-top:3px">${DATA.length} total &middot; ${c.pending} awaiting your review</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;border:1px solid #e6eaee;background:#fff;border-radius:10px;padding:8px 12px;min-width:220px">
+          <span style="color:#94A3B8;font-size:14px">&#128269;</span>
+          <input id="q-search" placeholder="Search by quote ID, customer&hellip;" value="${searchQuery.replace(/"/g,'&quot;')}"
+            style="border:none;outline:none;font-size:13px;font-family:inherit;background:transparent;color:#1E293B;width:100%">
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+        ${FILTER_DEFS.map(([k, label]) => {
+          const on = activeFilter === k;
+          return `<span data-filter="${k}" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:99px;cursor:pointer;border:1px solid ${on?'#1f6b4d':'#e6eaee'};background:${on?'#1f6b4d':'#fff'};color:${on?'#fff':'#475569'}">
+            ${label} <span style="font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;background:${on?'rgba(255,255,255,.2)':'#f1f5f9'};color:${on?'#fff':'#94A3B8'}">${c[k]}</span>
+          </span>`;
+        }).join('')}
+      </div>
+
+      <div style="background:#fff;border:1px solid #eef1f4;border-radius:16px;overflow:hidden">
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:760px">
+            <thead>
+              <tr style="background:#f8fafc">
+                <th style="text-align:left;padding:12px 18px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Quote</th>
+                <th style="text-align:left;padding:12px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Customer</th>
+                <th style="text-align:center;padding:12px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Items</th>
+                <th style="text-align:right;padding:12px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Latest total</th>
+                <th style="text-align:center;padding:12px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Rev</th>
+                <th style="text-align:left;padding:12px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #eef1f4">Status</th>
+                <th style="padding:12px 18px;border-bottom:1px solid #eef1f4"></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.map(q => {
+                const st = STATUS[q.status];
+                const isPending = q.status === 'pending' || q.status === 'revision_requested';
+                const btnStyle = isPending
+                  ? 'background:#1f6b4d;color:#fff;border:none'
+                  : 'background:#fff;color:#475569;border:1px solid #e6eaee';
+                return `<tr style="border-bottom:1px solid #f6f8fa">
+                  <td style="padding:13px 18px">
+                    <div style="font-family:\'Bricolage Grotesque\',sans-serif;font-size:14px;font-weight:800;color:#0f172a">${q.id}</div>
+                    <div style="font-size:11px;color:#94A3B8;margin-top:2px">${q.date}</div>
+                  </td>
+                  <td style="padding:13px 14px">
+                    <div style="display:flex;align-items:center;gap:10px">
+                      <div style="width:32px;height:32px;border-radius:50%;background:${q.avBg};color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${q.initials}</div>
+                      <div>
+                        <div style="font-size:13px;font-weight:600;color:#1E293B">${q.name}</div>
+                        <div style="font-size:11px;color:#94A3B8">${q.org}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="padding:13px 14px;text-align:center;color:#475569;font-weight:600">${q.items}</td>
+                  <td style="padding:13px 14px;text-align:right;font-family:\'Bricolage Grotesque\',sans-serif;font-size:14px;font-weight:800;color:#1f6b4d">${q.total}</td>
+                  <td style="padding:13px 14px;text-align:center"><span style="font-size:11px;font-weight:700;color:#475569;background:#f1f5f9;border-radius:99px;padding:2px 8px">#${q.rev}</span></td>
+                  <td style="padding:13px 14px"><span style="display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;color:${st.c};background:${st.bg};border:1px solid ${st.bd}">${st.label}</span></td>
+                  <td style="padding:13px 18px;text-align:right">
+                    <button style="display:inline-block;font-size:12px;font-weight:700;padding:7px 13px;border-radius:9px;cursor:pointer;font-family:inherit;${btnStyle}">${isPending ? 'Review &rarr;' : 'Open &rarr;'}</button>
+                  </td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-top:1px solid #eef1f4;flex-wrap:wrap;gap:10px">
+          <span style="font-size:12px;color:#94A3B8">Showing ${rows.length} of ${DATA.length} quotes</span>
+          <div style="display:flex;gap:6px">
+            <span style="width:28px;height:28px;border-radius:8px;border:1px solid #e6eaee;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;color:#94A3B8;cursor:pointer">&lsaquo;</span>
+            <span style="width:28px;height:28px;border-radius:8px;border:1px solid #1f6b4d;background:#1f6b4d;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;cursor:pointer">1</span>
+            <span style="width:28px;height:28px;border-radius:8px;border:1px solid #e6eaee;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;color:#475569;cursor:pointer">2</span>
+            <span style="width:28px;height:28px;border-radius:8px;border:1px solid #e6eaee;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;color:#475569;cursor:pointer">&rsaquo;</span>
+          </div>
+        </div>
+      </div>`;
+
+    document.querySelectorAll('[data-filter]').forEach(el =>
+      el.addEventListener('click', () => { activeFilter = el.dataset.filter; render(); })
+    );
+    const si = document.getElementById('q-search');
+    if (si) si.addEventListener('input', e => { searchQuery = e.target.value; render(); });
+  }
+
+  render();
+});
+</script>
+</body>
+</html>

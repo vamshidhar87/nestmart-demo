@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account — Padmavathi Traders</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* ── Page scaffold ── */
+    .acct-page {
+      padding: 32px 0 72px;
+      background: var(--bg-outer, #f4f6f4);
+      min-height: 70vh;
+    }
+
+    .acct-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ── Sidebar ── */
+    .acct-sidebar {
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      position: sticky;
+      top: 20px;
+    }
+
+    .acct-sidebar-header {
+      padding: 16px 18px 12px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--green-dark);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .acct-nav {
+      padding: 8px 0;
+    }
+
+    .acct-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-dark);
+      cursor: pointer;
+      border-radius: 0;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+      position: relative;
+    }
+
+    .acct-nav-item:hover {
+      background: var(--green-light);
+      color: var(--green-dark);
+    }
+
+    .acct-nav-item.active {
+      background: var(--green-dark);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .acct-nav-item .nav-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      line-height: 1;
+      width: 20px;
+      text-align: center;
+    }
+
+    .acct-nav-badge {
+      margin-left: auto;
+      background: #ef4444;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 20px;
+      line-height: 1.6;
+    }
+
+    .acct-nav-item.active .acct-nav-badge {
+      background: rgba(255,255,255,0.25);
+    }
+
+    .acct-nav-divider {
+      height: 1px;
+      background: var(--border-light);
+      margin: 6px 0;
+    }
+
+    .acct-nav-signout {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #ef4444;
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-family: var(--font-body);
+      transition: background 0.15s;
+      border-radius: 0;
+    }
+
+    .acct-nav-signout:hover {
+      background: #fee2e2;
+    }
+
+    .acct-nav-section-label {
+      padding: 10px 18px 3px;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    /* ── Main content area ── */
+    .acct-main {
+      min-width: 0;
+    }
+
+    /* ── Greeting ── */
+    .acct-greeting {
+      margin-bottom: 24px;
+    }
+
+    .acct-greeting-heading {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+
+    .acct-greeting-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ── Stat cards ── */
+    .acct-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      border-radius: 3px 0 0 3px;
+    }
+
+    .stat-card.blue::before  { background: #3B82F6; }
+    .stat-card.orange::before { background: #F59E0B; }
+    .stat-card.green::before  { background: #1f6b4d; }
+    .stat-card.purple::before { background: #7c3aed; }
+
+    .stat-card-icon {
+      font-size: 18px;
+      line-height: 1;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .stat-card-value {
+      font-family: var(--font-heading);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-card-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .stat-badge {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 10px;
+      font-weight: 600;
+      color: #3B82F6;
+      background: #eff6ff;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    /* ── Tabs ── */
+    .acct-tabs-bar {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--border-light);
+      margin-bottom: 20px;
+    }
+
+    .acct-tab-btn {
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      border-bottom: 2.5px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: color 0.15s, border-color 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .acct-tab-btn:hover {
+      color: var(--green-dark);
+    }
+
+    .acct-tab-btn.active {
+      color: var(--green-dark);
+      border-bottom-color: var(--green-dark);
+    }
+
+    .acct-tab-count {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--green-light);
+      color: var(--green-dark);
+      padding: 1px 7px;
+      border-radius: 20px;
+    }
+
+    .acct-tab-btn.active .acct-tab-count {
+      background: var(--green-dark);
+      color: #fff;
+    }
+
+    /* ── Tab panels ── */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Quote / Order cards ── */
+    .quote-card,
+    .order-card {
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 20px 22px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .quote-card:hover,
+    .order-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+
+    .quote-card-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .quote-id {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    /* ── Status badges ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+      line-height: 1.5;
+      white-space: nowrap;
+    }
+
+    .badge-blue   { background: #eff6ff; color: #3B82F6; }
+    .badge-orange { background: #fffbeb; color: #D97706; }
+    .badge-green  { background: #f0fdf4; color: #1f6b4d; }
+    .badge-gray   { background: #f1f5f9; color: #64748B; }
+    .badge-purple { background: #f5f3ff; color: #7c3aed; }
+
+    .quote-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .quote-preview {
+      font-size: 13px;
+      color: var(--text-dark);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .quote-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .quote-total {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .quote-total-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-right: 4px;
+    }
+
+    .quote-cta-link {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--green-dark);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: color 0.15s;
+      background: none;
+      border: none;
+      font-family: var(--font-body);
+      padding: 0;
+    }
+
+    .quote-cta-link:hover {
+      color: var(--green-mid);
+    }
+
+    /* ── Order cards ── */
+    .order-card-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .order-id {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .order-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .order-eta {
+      font-size: 12px;
+      color: var(--text-dark);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .order-eta-icon {
+      font-size: 13px;
+    }
+
+    .order-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .order-total {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .order-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-order-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      color: var(--text-dark);
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+
+    .btn-order-action:hover {
+      border-color: var(--green-mid);
+      color: var(--green-dark);
+      background: var(--green-light);
+    }
+
+    /* ═══════════════════════════════════════════
+       QUOTE DETAIL VIEW
+    ═══════════════════════════════════════════ */
+    .quote-detail { display: none; }
+    .quote-detail.visible { display: block; }
+
+    .quote-list-view { display: block; }
+    .quote-list-view.hidden { display: none; }
+
+    .detail-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+      font-family: var(--font-body);
+      margin-bottom: 18px;
+      transition: color 0.15s;
+    }
+
+    .detail-back-link:hover {
+      color: var(--green-dark);
+    }
+
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    /* Detail left col */
+    .detail-left {}
+
+    .detail-header-card {
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 20px 22px 18px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .detail-header-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .detail-quote-id {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .detail-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .detail-actions-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      color: var(--text-dark);
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .btn-download:hover {
+      border-color: var(--green-mid);
+      color: var(--green-dark);
+    }
+
+    /* Info banner */
+    .detail-info-banner {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #1e40af;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .detail-info-banner-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Items table */
+    .detail-table-card {
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 16px;
+    }
+
+    .detail-table-head {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-light);
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .detail-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .detail-table thead tr {
+      background: #f8fafc;
+    }
+
+    .detail-table thead th {
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .detail-table thead th:last-child,
+    .detail-table tbody td:last-child {
+      text-align: right;
+    }
+
+    .detail-table tbody tr {
+      border-bottom: 1px solid var(--border-light);
+      transition: background 0.1s;
+    }
+
+    .detail-table tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .detail-table tbody tr:hover {
+      background: #fafbfc;
+    }
+
+    .detail-table tbody td {
+      padding: 13px 16px;
+      font-size: 13px;
+      color: var(--text-dark);
+    }
+
+    .detail-table-item-name {
+      font-weight: 600;
+    }
+
+    .detail-table-item-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Timeline */
+    .detail-timeline-card {
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 20px 22px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .detail-timeline-heading {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 18px;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 24px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: var(--border-light);
+    }
+
+    .timeline-entry {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .timeline-entry:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -24px;
+      top: 3px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--border-light);
+      background: #fff;
+      z-index: 1;
+    }
+
+    .timeline-entry.done .timeline-dot {
+      background: var(--green-dark);
+      border-color: var(--green-dark);
+    }
+
+    .timeline-entry.current .timeline-dot {
+      background: #3B82F6;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 3px #dbeafe;
+    }
+
+    .timeline-entry-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dark);
+      line-height: 1.3;
+    }
+
+    .timeline-entry.done .timeline-entry-label {
+      color: var(--green-dark);
+    }
+
+    .timeline-entry.pending .timeline-entry-label {
+      color: var(--text-light);
+    }
+
+    .timeline-entry-date {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Detail right col — summary card */
+    .detail-right {}
+
+    .detail-summary-card {
+      background: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      position: sticky;
+      top: 20px;
+    }
+
+    .detail-summary-head {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-light);
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .detail-summary-body {
+      padding: 16px 18px;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 9px;
+      font-size: 13px;
+    }
+
+    .price-row-label {
+      color: var(--text-muted);
+    }
+
+    .price-row-value {
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .price-row-value.discount {
+      color: #16a34a;
+    }
+
+    .price-row-value.waived {
+      color: #16a34a;
+      font-weight: 600;
+    }
+
+    .price-divider {
+      height: 1px;
+      background: var(--border-light);
+      margin: 12px 0;
+    }
+
+    .price-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .price-total-label {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .price-total-value {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .detail-summary-actions {
+      padding: 0 18px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-approve {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 18px;
+      background: var(--green-dark);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.12s;
+    }
+
+    .btn-approve:hover {
+      background: #155239;
+      transform: translateY(-1px);
+    }
+
+    .btn-revision {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: 100%;
+      padding: 11px 18px;
+      background: #fff;
+      color: var(--green-dark);
+      border: 1.5px solid var(--green-dark);
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-revision:hover {
+      background: var(--green-light);
+    }
+
+    .btn-reject {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: 100%;
+      padding: 11px 18px;
+      background: #fff;
+      color: #ef4444;
+      border: 1.5px solid #fca5a5;
+      border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .btn-reject:hover {
+      background: #fee2e2;
+      border-color: #ef4444;
+    }
+
+    /* ═══════════════════════════════════════════
+       REVISION MODAL
+    ═══════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+      transform: translateY(24px);
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      overflow: hidden;
+    }
+
+    .modal-overlay.open .modal-box {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .modal-title {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .modal-close-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-light);
+      background: none;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .modal-close-btn:hover {
+      background: #f1f5f9;
+      color: var(--text-dark);
+    }
+
+    .modal-body {
+      padding: 20px 22px;
+    }
+
+    .modal-body p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .revision-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .revision-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 13px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-dark);
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      user-select: none;
+    }
+
+    .revision-chip:hover,
+    .revision-chip.selected {
+      border-color: var(--green-mid);
+      background: var(--green-light);
+      color: var(--green-dark);
+    }
+
+    .revision-textarea {
+      width: 100%;
+      min-height: 100px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      font-family: var(--font-body);
+      color: var(--text-dark);
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s;
+      box-sizing: border-box;
+    }
+
+    .revision-textarea:focus {
+      border-color: var(--green-mid);
+    }
+
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 14px 22px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .btn-modal-cancel {
+      padding: 9px 18px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      color: var(--text-dark);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: background 0.15s;
+    }
+
+    .btn-modal-cancel:hover {
+      background: #f1f5f9;
+    }
+
+    .btn-modal-send {
+      padding: 9px 20px;
+      border-radius: 8px;
+      border: none;
+      background: var(--green-dark);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: background 0.15s;
+    }
+
+    .btn-modal-send:hover {
+      background: #155239;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .acct-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .detail-layout {
+        grid-template-columns: 1fr;
+      }
+      .detail-summary-card {
+        position: static;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .acct-layout {
+        grid-template-columns: 1fr;
+      }
+      .acct-sidebar {
+        position: static;
+        display: block;
+        border-radius: 10px;
+        padding: 8px;
+        overflow: visible;
+      }
+      .acct-sidebar-header { display: none; }
+      .acct-nav {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 0;
+      }
+      .acct-nav-item {
+        flex: 1 1 calc(50% - 6px);
+        padding: 9px 12px;
+        white-space: nowrap;
+        border-radius: 8px;
+        justify-content: flex-start;
+        min-width: 0;
+        background: #fff;
+        border: 1.5px solid var(--border-light);
+      }
+      .acct-nav-divider { display: none; }
+      .acct-nav-section-label { display: none; }
+      .acct-nav-signout {
+        width: 100%;
+        margin-top: 6px;
+        padding: 9px 12px;
+        border-top: 1px solid var(--border-light);
+        box-sizing: border-box;
+      }
+      .acct-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .acct-stats {
+        grid-template-columns: 1fr 1fr;
+      }
+      .stat-card-value {
+        font-size: 20px;
+      }
+      .quote-footer,
+      .order-footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .modal-box,
+      .quote-card,
+      .order-card,
+      .acct-nav-item,
+      .btn-approve {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="acct-page">
+    <div class="container">
+      <div class="acct-layout">
+
+        <!-- ── SIDEBAR ── -->
+        <aside class="acct-sidebar">
+          <div class="acct-sidebar-header">My Account</div>
+          <nav class="acct-nav">
+            <span class="acct-nav-item active" id="nav-quotes" onclick="switchTab('quotes')">
+              <span class="nav-icon">📋</span>
+              My Quotes
+              <span class="acct-nav-badge">1</span>
+            </span>
+            <span class="acct-nav-item" id="nav-orders" onclick="switchTab('orders')">
+              <span class="nav-icon">📦</span>
+              My Orders
+            </span>
+            <a href="/wishlist" class="acct-nav-item">
+              <span class="nav-icon">♡</span>
+              Wishlist
+            </a>
+            <div class="acct-nav-section-label">Settings</div>
+            <a href="/account/settings" class="acct-nav-item">
+              <span class="nav-icon">👤</span>
+              Profile
+            </a>
+            <a href="/account/settings?tab=addresses" class="acct-nav-item">
+              <span class="nav-icon">📍</span>
+              Addresses
+            </a>
+            <a href="/account/settings?tab=gst" class="acct-nav-item">
+              <span class="nav-icon">🧾</span>
+              Business &amp; GST
+            </a>
+            <a href="/account/settings?tab=security" class="acct-nav-item">
+              <span class="nav-icon">🔐</span>
+              Security
+            </a>
+            <a href="/account/settings?tab=notifications" class="acct-nav-item">
+              <span class="nav-icon">🔔</span>
+              Notifications
+            </a>
+          </nav>
+          <div class="acct-nav-divider"></div>
+          <button class="acct-nav-signout" onclick="NM.logout()">
+            <span style="font-size:15px">⎋</span>
+            Sign Out
+          </button>
+        </aside>
+
+        <!-- ── MAIN CONTENT ── -->
+        <div class="acct-main">
+
+          <!-- Greeting -->
+          <div class="acct-greeting">
+            <h1 class="acct-greeting-heading" id="greeting-heading">Welcome back 👋</h1>
+            <p class="acct-greeting-sub">Here's what's happening with your quotes and orders.</p>
+          </div>
+
+          <!-- Stat cards -->
+          <div class="acct-stats">
+            <div class="stat-card blue">
+              <span class="stat-card-icon">📋</span>
+              <div class="stat-card-value">1</div>
+              <div class="stat-card-label">Awaiting approval</div>
+              <span class="stat-badge">Action needed</span>
+            </div>
+            <div class="stat-card orange">
+              <span class="stat-card-icon">⏳</span>
+              <div class="stat-card-value">1</div>
+              <div class="stat-card-label">Pending our quote</div>
+            </div>
+            <div class="stat-card green">
+              <span class="stat-card-icon">📦</span>
+              <div class="stat-card-value">3</div>
+              <div class="stat-card-label">Active orders</div>
+            </div>
+            <div class="stat-card purple">
+              <span class="stat-card-icon">💰</span>
+              <div class="stat-card-value">₹30,764</div>
+              <div class="stat-card-label">Spent this quarter</div>
+            </div>
+          </div>
+
+          <!-- Tabs -->
+          <div class="acct-tabs-bar">
+            <button class="acct-tab-btn active" id="tab-quotes-btn" onclick="switchTab('quotes')">
+              Quotes
+              <span class="acct-tab-count">4</span>
+            </button>
+            <button class="acct-tab-btn" id="tab-orders-btn" onclick="switchTab('orders')">
+              Orders
+              <span class="acct-tab-count">3</span>
+            </button>
+          </div>
+
+          <!-- ── QUOTES TAB ── -->
+          <div class="tab-panel active" id="panel-quotes">
+
+            <!-- Quotes list view -->
+            <div class="quote-list-view" id="quotes-list-view">
+
+              <!-- QT-2041 -->
+              <div class="quote-card">
+                <div class="quote-card-top">
+                  <span class="quote-id">QT-2041</span>
+                  <span class="badge badge-blue">Awaiting Your Approval</span>
+                  <span class="badge badge-purple">↻ Rev. 2</span>
+                </div>
+                <div class="quote-meta">Requested 18 Jun 2026 &middot; 4 items &middot; School art dept.</div>
+                <div class="quote-preview">Faber-Castell pencils, Camlin watercolours, sketch pads + 2 more</div>
+                <div class="quote-footer">
+                  <div class="quote-total"><span class="quote-total-label">Total</span> ₹65,363</div>
+                  <button class="quote-cta-link" onclick="showQuoteDetail()">Review &amp; approve →</button>
+                </div>
+              </div>
+
+              <!-- QT-2038 -->
+              <div class="quote-card">
+                <div class="quote-card-top">
+                  <span class="quote-id">QT-2038</span>
+                  <span class="badge badge-orange">Pending Review</span>
+                </div>
+                <div class="quote-meta">Requested 20 Jun 2026 &middot; 3 items &middot; Office re-stock</div>
+                <div class="quote-preview">A4 copier paper (20 reams), sticky notes, whiteboard markers</div>
+                <div class="quote-footer">
+                  <div class="quote-total"><span class="quote-total-label">Est. subtotal</span> ₹7,438</div>
+                  <button class="quote-cta-link">View request →</button>
+                </div>
+              </div>
+
+              <!-- QT-2035 -->
+              <div class="quote-card">
+                <div class="quote-card-top">
+                  <span class="quote-id">QT-2035</span>
+                  <span class="badge badge-green">Approved · Order Placed</span>
+                </div>
+                <div class="quote-meta">Requested 10 Jun 2026 &middot; 3 items &middot; College fest</div>
+                <div class="quote-preview">Chart paper, markers, craft supplies for annual fest</div>
+                <div class="quote-footer">
+                  <div class="quote-total"><span class="quote-total-label">Total</span> ₹8,934</div>
+                  <button class="quote-cta-link">View order →</button>
+                </div>
+              </div>
+
+              <!-- QT-2030 -->
+              <div class="quote-card">
+                <div class="quote-card-top">
+                  <span class="quote-id">QT-2030</span>
+                  <span class="badge badge-gray">Expired</span>
+                </div>
+                <div class="quote-meta">Requested 28 May 2026 &middot; 2 items &middot; Personal</div>
+                <div class="quote-preview">Wildcraft backpack, scientific calculator, journal</div>
+                <div class="quote-footer">
+                  <div class="quote-total"><span class="quote-total-label">Total</span> ₹2,564</div>
+                  <button class="quote-cta-link">View details →</button>
+                </div>
+              </div>
+
+            </div><!-- /quotes-list-view -->
+
+            <!-- Quote detail view -->
+            <div class="quote-detail" id="quote-detail-view">
+
+              <button class="detail-back-link" onclick="hideQuoteDetail()">← Back to my quotes</button>
+
+              <div class="detail-layout">
+
+                <!-- Left -->
+                <div class="detail-left">
+
+                  <!-- Header card -->
+                  <div class="detail-header-card">
+                    <div class="detail-header-top">
+                      <span class="detail-quote-id">QT-2041</span>
+                      <span class="badge badge-blue">Awaiting Your Approval</span>
+                      <span class="badge badge-purple">↻ Rev. 2</span>
+                    </div>
+                    <div class="detail-meta">Requested 18 Jun 2026 &middot; 4 items &middot; School art dept.</div>
+                    <div class="detail-actions-row">
+                      <button class="btn-download" onclick="showToast('PDF download started','info')">⬇ Download PDF</button>
+                    </div>
+                  </div>
+
+                  <!-- Info banner -->
+                  <div class="detail-info-banner">
+                    <span class="detail-info-banner-icon">📨</span>
+                    <span>A revised quote is ready for your approval — We've applied a <strong>12% bulk discount</strong> and waived the handling fee. Delivery in 3–4 days.</span>
+                  </div>
+
+                  <!-- Items table -->
+                  <div class="detail-table-card">
+                    <div class="detail-table-head">Quoted Items</div>
+                    <div style="overflow-x:auto;">
+                      <table class="detail-table">
+                        <thead>
+                          <tr>
+                            <th>Item</th>
+                            <th style="text-align:center">Qty</th>
+                            <th style="text-align:right">Unit</th>
+                            <th>Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <div class="detail-table-item-name">Faber-Castell 24 Colour Pencils</div>
+                            </td>
+                            <td style="text-align:center">60</td>
+                            <td style="text-align:right">₹255</td>
+                            <td style="text-align:right;font-weight:600">₹15,300</td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <div class="detail-table-item-name">Camlin Watercolour Cakes</div>
+                              <div class="detail-table-item-sub">12 shades per set</div>
+                            </td>
+                            <td style="text-align:center">40</td>
+                            <td style="text-align:right">₹520</td>
+                            <td style="text-align:right;font-weight:600">₹20,800</td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <div class="detail-table-item-name">Maped Paint Brush Set</div>
+                              <div class="detail-table-item-sub">10 pcs per set</div>
+                            </td>
+                            <td style="text-align:center">40</td>
+                            <td style="text-align:right">₹245</td>
+                            <td style="text-align:right;font-weight:600">₹9,800</td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <div class="detail-table-item-name">Brustro Sketch Pad · A4</div>
+                            </td>
+                            <td style="text-align:center">50</td>
+                            <td style="text-align:right">₹195</td>
+                            <td style="text-align:right;font-weight:600">₹9,750</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- Quote timeline -->
+                  <div class="detail-timeline-card">
+                    <div class="detail-timeline-heading">Quote Timeline</div>
+                    <div class="timeline">
+                      <div class="timeline-entry done">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-entry-label">Quote requested</div>
+                        <div class="timeline-entry-date">18 Jun 2026 · 10:14 AM</div>
+                      </div>
+                      <div class="timeline-entry done">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-entry-label">Initial quote sent (Rev. 1)</div>
+                        <div class="timeline-entry-date">19 Jun 2026 · 2:30 PM</div>
+                      </div>
+                      <div class="timeline-entry done">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-entry-label">Revision requested — price negotiation</div>
+                        <div class="timeline-entry-date">20 Jun 2026 · 11:05 AM</div>
+                      </div>
+                      <div class="timeline-entry current">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-entry-label">Revised quote sent (Rev. 2) — awaiting your approval</div>
+                        <div class="timeline-entry-date">21 Jun 2026 · 3:45 PM</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div><!-- /detail-left -->
+
+                <!-- Right — sticky summary -->
+                <div class="detail-right">
+                  <div class="detail-summary-card">
+                    <div class="detail-summary-head">Price Summary</div>
+                    <div class="detail-summary-body">
+                      <div class="price-row">
+                        <span class="price-row-label">Subtotal (4 items)</span>
+                        <span class="price-row-value">₹55,650</span>
+                      </div>
+                      <div class="price-row">
+                        <span class="price-row-label">Bulk discount (12%)</span>
+                        <span class="price-row-value discount">−₹6,678</span>
+                      </div>
+                      <div class="price-row">
+                        <span class="price-row-label">GST (18%)</span>
+                        <span class="price-row-value">₹8,835</span>
+                      </div>
+                      <div class="price-row">
+                        <span class="price-row-label">Delivery</span>
+                        <span class="price-row-value waived">Waived</span>
+                      </div>
+                      <div class="price-row">
+                        <span class="price-row-label">Handling</span>
+                        <span class="price-row-value waived">Waived</span>
+                      </div>
+                      <div class="price-divider"></div>
+                      <div class="price-total-row">
+                        <span class="price-total-label">Total</span>
+                        <span class="price-total-value">₹57,807</span>
+                      </div>
+                    </div>
+                    <div class="detail-summary-actions">
+                      <button class="btn-approve" onclick="handleApprove()">
+                        ✓ Approve &amp; Convert to Order
+                      </button>
+                      <button class="btn-revision" onclick="openRevisionModal()">
+                        ↻ Request a Revision
+                      </button>
+                      <button class="btn-reject" onclick="handleReject()">
+                        ✕ Reject Quote
+                      </button>
+                    </div>
+                  </div>
+                </div><!-- /detail-right -->
+
+              </div><!-- /detail-layout -->
+
+            </div><!-- /quote-detail-view -->
+
+          </div><!-- /panel-quotes -->
+
+          <!-- ── ORDERS TAB ── -->
+          <div class="tab-panel" id="panel-orders">
+
+            <!-- ORD-1052 -->
+            <div class="order-card">
+              <div class="order-card-top">
+                <span class="order-id">ORD-1052</span>
+                <span class="badge badge-orange">Processing</span>
+              </div>
+              <div class="order-meta">Placed 11 Jun 2026 &middot; from QT-2035 &middot; 3 items</div>
+              <div class="order-eta">
+                <span class="order-eta-icon">🚚</span>
+                Expected dispatch by 23 Jun &middot; arriving 25–26 Jun
+              </div>
+              <div class="order-footer">
+                <div class="order-total">₹9,234</div>
+                <div class="order-actions">
+                  <button class="btn-order-action" onclick="showToast('Opening invoice…','info')">🧾 Invoice</button>
+                  <button class="btn-order-action" onclick="showToast('Tracking not yet available for this order','info')">Track →</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ORD-1048 -->
+            <div class="order-card">
+              <div class="order-card-top">
+                <span class="order-id">ORD-1048</span>
+                <span class="badge badge-blue">Shipped</span>
+              </div>
+              <div class="order-meta">Placed 04 Jun 2026 &middot; from QT-2029 &middot; 6 items</div>
+              <div class="order-eta">
+                <span class="order-eta-icon">📦</span>
+                In transit &middot; tracking <strong>BLDT09241</strong> &middot; arriving 23 Jun
+              </div>
+              <div class="order-footer">
+                <div class="order-total">₹14,820</div>
+                <div class="order-actions">
+                  <button class="btn-order-action" onclick="showToast('Opening invoice…','info')">🧾 Invoice</button>
+                  <button class="btn-order-action" onclick="showToast('Tracking BLDT09241 opened','info')">Track →</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ORD-1041 -->
+            <div class="order-card">
+              <div class="order-card-top">
+                <span class="order-id">ORD-1041</span>
+                <span class="badge badge-green">Delivered</span>
+              </div>
+              <div class="order-meta">Placed 22 May 2026 &middot; from QT-2021 &middot; 4 items</div>
+              <div class="order-eta">
+                <span class="order-eta-icon">✅</span>
+                Delivered 26 May &middot; signed by reception
+              </div>
+              <div class="order-footer">
+                <div class="order-total">₹6,710</div>
+                <div class="order-actions">
+                  <button class="btn-order-action" onclick="showToast('Opening invoice…','info')">🧾 Invoice</button>
+                  <button class="btn-order-action" onclick="showToast('Order delivered — no tracking active','info')">Track →</button>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /panel-orders -->
+
+        </div><!-- /acct-main -->
+      </div><!-- /acct-layout -->
+    </div><!-- /container -->
+  </div><!-- /acct-page -->
+
+  <!-- ── REVISION MODAL ── -->
+  <div class="modal-overlay" id="revision-modal" onclick="handleOverlayClick(event)">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="revision-modal-title">
+      <div class="modal-header">
+        <span class="modal-title" id="revision-modal-title">Request a Revision</span>
+        <button class="modal-close-btn" onclick="closeRevisionModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>Select a reason below or describe what you'd like changed. We'll revise the quote and send it back within 4 hours.</p>
+        <div class="revision-chips">
+          <button class="revision-chip" onclick="toggleChip(this,'Increase quantities')">Increase quantities</button>
+          <button class="revision-chip" onclick="toggleChip(this,'Lower the price')">Lower the price</button>
+          <button class="revision-chip" onclick="toggleChip(this,'Change delivery date')">Change delivery date</button>
+          <button class="revision-chip" onclick="toggleChip(this,'Add more items')">Add more items</button>
+          <button class="revision-chip" onclick="toggleChip(this,'Split into two orders')">Split into two orders</button>
+        </div>
+        <textarea
+          class="revision-textarea"
+          id="revision-textarea"
+          placeholder="Describe the changes you'd like…"
+          rows="4"
+        ></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" onclick="closeRevisionModal()">Cancel</button>
+        <button class="btn-modal-send" onclick="sendRevision()">Send Revision Request</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/data.js"></script>
+  <script src="/js/state.js"></script>
+  <script src="/js/components.js"></script>
+  <script>
+    // ── Auth guard ──
+    (function() {
+      if (!NM.getUser()) {
+        window.location.href = '/login?demo=1';
+      }
+    })();
+
+    // ── Inject shell (navbar + footer) ──
+    injectStorefrontShell();
+    // Move static page content into the shell's <main> so it sits inside
+    // storefront-wrap (prevents the flex-expanded empty main creating whitespace)
+    var _main = document.getElementById('main-content');
+    var _page = document.querySelector('.acct-page');
+    if (_main && _page) _main.appendChild(_page);
+
+    // ── Personalise greeting ──
+    (function() {
+      var user = NM.getUser();
+      if (user && user.name) {
+        var first = user.name.split(' ')[0];
+        var el = document.getElementById('greeting-heading');
+        if (el) el.textContent = 'Welcome back, ' + first + ' 👋';
+      }
+    })();
+
+    // ── Tab switching ──
+    function switchTab(tab) {
+      var panels = document.querySelectorAll('.tab-panel');
+      panels.forEach(function(p) { p.classList.remove('active'); });
+
+      var btns = document.querySelectorAll('.acct-tab-btn');
+      btns.forEach(function(b) { b.classList.remove('active'); });
+
+      var panel = document.getElementById('panel-' + tab);
+      if (panel) panel.classList.add('active');
+
+      var btn = document.getElementById('tab-' + tab + '-btn');
+      if (btn) btn.classList.add('active');
+
+      // Sync sidebar active state
+      var navQuotes = document.getElementById('nav-quotes');
+      var navOrders = document.getElementById('nav-orders');
+      if (navQuotes) navQuotes.classList.toggle('active', tab === 'quotes');
+      if (navOrders) navOrders.classList.toggle('active', tab === 'orders');
+
+      if (tab !== 'quotes') {
+        hideQuoteDetail();
+      }
+    }
+
+    // ── Quote detail show/hide ──
+    function showQuoteDetail() {
+      var listView = document.getElementById('quotes-list-view');
+      var detailView = document.getElementById('quote-detail-view');
+      if (listView) listView.classList.add('hidden');
+      if (detailView) detailView.classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideQuoteDetail() {
+      var listView = document.getElementById('quotes-list-view');
+      var detailView = document.getElementById('quote-detail-view');
+      if (listView) listView.classList.remove('hidden');
+      if (detailView) detailView.classList.remove('visible');
+    }
+
+    // ── Approve action ──
+    function handleApprove() {
+      showToast('Quote QT-2041 approved — order ORD-1053 created!', 'success');
+      setTimeout(function() {
+        hideQuoteDetail();
+        switchTab('orders');
+      }, 1800);
+    }
+
+    // ── Reject action ──
+    function handleReject() {
+      if (confirm('Are you sure you want to reject quote QT-2041? This cannot be undone.')) {
+        showToast('Quote QT-2041 rejected.', 'info');
+        hideQuoteDetail();
+      }
+    }
+
+    // ── Revision modal ──
+    function openRevisionModal() {
+      var modal = document.getElementById('revision-modal');
+      if (modal) modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeRevisionModal() {
+      var modal = document.getElementById('revision-modal');
+      if (modal) modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('revision-modal')) {
+        closeRevisionModal();
+      }
+    }
+
+    function toggleChip(chip, text) {
+      chip.classList.toggle('selected');
+      var textarea = document.getElementById('revision-textarea');
+      if (!textarea) return;
+      var current = textarea.value;
+      if (chip.classList.contains('selected')) {
+        textarea.value = current ? current.trimEnd() + '\n' + text : text;
+      } else {
+        textarea.value = current.replace(text, '').replace(/\n\n+/g, '\n').trim();
+      }
+      textarea.focus();
+    }
+
+    function sendRevision() {
+      var textarea = document.getElementById('revision-textarea');
+      var text = textarea ? textarea.value.trim() : '';
+      if (!text) {
+        showToast('Please describe the changes you need.', 'error');
+        return;
+      }
+      closeRevisionModal();
+      showToast('Revision request sent — we\'ll update your quote within 4 hours.', 'success');
+      // Reset
+      if (textarea) textarea.value = '';
+      document.querySelectorAll('.revision-chip').forEach(function(c) { c.classList.remove('selected'); });
+    }
+
+    // Close modal on Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeRevisionModal();
+    });
+  </script>
+</body>
+</html>

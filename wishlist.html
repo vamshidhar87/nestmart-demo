@@ -1,0 +1,671 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Wishlist — Padmavathi Traders</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* ── Wishlist page-specific styles ── */
+    .wl-page {
+      padding: 32px 0 60px;
+    }
+
+    /* Breadcrumb row */
+    .wl-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .wl-title-group {}
+    .wl-heading {
+      font-family: var(--font-heading);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .wl-count-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--green-light);
+      color: var(--green-dark);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 3px 11px;
+      border-radius: 20px;
+      font-family: var(--font-body);
+    }
+    .wl-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ── Wishlist product card ── */
+    .wl-card {
+      background: var(--bg-page);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border-light);
+      overflow: hidden;
+      transition: box-shadow .2s, transform .2s;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .wl-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+    }
+    .wl-card-img {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: background .2s;
+    }
+    .wl-card:hover .wl-card-img {
+      background: linear-gradient(135deg, #fff0f0, #fde8e8);
+    }
+    .wl-card-img .product-emoji {
+      font-size: 52px;
+      line-height: 1;
+      transition: transform .2s;
+    }
+    .wl-card:hover .product-emoji {
+      transform: scale(1.08);
+    }
+    .wl-remove-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all .15s;
+      backdrop-filter: blur(4px);
+    }
+    .wl-remove-btn:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: var(--red);
+    }
+    .wl-heart-mark {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 15px;
+      color: #ef4444;
+      opacity: 0.9;
+    }
+    .wl-discount-badge {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: var(--red);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .wl-card-body {
+      padding: 14px 14px 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .wl-card-brand {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .wl-card-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      line-height: 1.4;
+      margin-bottom: 8px;
+      flex: 1;
+    }
+    .wl-card-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+    .wl-card-price {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--green-dark);
+      font-variant-numeric: tabular-nums;
+    }
+    .wl-card-original {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-muted);
+      text-decoration: line-through;
+      font-variant-numeric: tabular-nums;
+    }
+    .wl-card-savings {
+      font-size: 11px;
+      font-weight: 600;
+      color: #16a34a;
+      background: #dcfce7;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .wl-card-stock-out {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--red);
+      background: #fee2e2;
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    .wl-card-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .wl-cart-btn {
+      flex: 1;
+      padding: 9px 14px;
+      border-radius: var(--radius-btn);
+      background: var(--green-mid);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .15s;
+      font-family: var(--font-body);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .wl-cart-btn:hover {
+      background: var(--green-dark);
+    }
+    .wl-cart-btn:disabled {
+      background: var(--border);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+    .wl-del-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      background: #fff;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all .15s;
+      flex-shrink: 0;
+    }
+    .wl-del-btn:hover {
+      border-color: #fca5a5;
+      background: #fee2e2;
+      color: var(--red);
+    }
+
+    /* ── Empty state ── */
+    .wl-empty {
+      background: var(--bg-page);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border-light);
+      padding: 72px 40px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .wl-empty-icon {
+      font-size: 64px;
+      line-height: 1;
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+    .wl-empty-heading {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+    .wl-empty-sub {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      max-width: 340px;
+      line-height: 1.6;
+    }
+
+    /* ── Recommendations strip ── */
+    .wl-reco-section {
+      margin-top: 56px;
+    }
+    .wl-reco-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .wl-reco-title {
+      font-family: var(--font-heading);
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    .wl-reco-scroll {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+    .wl-reco-scroll::-webkit-scrollbar {
+      height: 4px;
+    }
+    .wl-reco-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .wl-reco-scroll::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+    .wl-reco-card {
+      flex-shrink: 0;
+      width: 200px;
+      background: var(--bg-page);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border-light);
+      overflow: hidden;
+      transition: box-shadow .18s, transform .18s;
+      cursor: pointer;
+    }
+    .wl-reco-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .wl-reco-img {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+    }
+    .wl-reco-body {
+      padding: 12px;
+    }
+    .wl-reco-brand {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 3px;
+    }
+    .wl-reco-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dark);
+      line-height: 1.3;
+      margin-bottom: 6px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .wl-reco-price {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--green-dark);
+      font-variant-numeric: tabular-nums;
+    }
+    .wl-reco-add {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 7px 10px;
+      background: var(--green-light);
+      color: var(--green-dark);
+      border: 1.5px solid #bbf0d8;
+      border-radius: var(--radius-btn);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: all .15s;
+      text-align: center;
+    }
+    .wl-reco-add:hover {
+      background: var(--green-mid);
+      color: #fff;
+      border-color: var(--green-mid);
+    }
+
+    /* ── Scroll-fade mask on reco strip container ── */
+    .wl-reco-wrap {
+      position: relative;
+    }
+    .wl-reco-wrap::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 12px;
+      width: 60px;
+      background: linear-gradient(to right, transparent, var(--bg-outer));
+      pointer-events: none;
+      border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    }
+
+    /* ── Account nav grid (mobile only) ── */
+    .wl-acct-nav-wrap { display: none; margin-bottom: 16px; }
+    .wl-acct-nav { display: flex; flex-wrap: wrap; gap: 6px; }
+    .wl-acct-nav-tab {
+      flex: 1 1 calc(50% - 6px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border-light);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-dark);
+      cursor: pointer;
+      white-space: nowrap;
+      background: #fff;
+      font-family: var(--font-body);
+      transition: background .15s, color .15s, border-color .15s;
+      text-decoration: none;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .wl-acct-nav-tab:hover { background: var(--green-light); color: var(--green-dark); border-color: var(--green-mid); }
+    .wl-acct-nav-tab.active { background: var(--green-dark); color: #fff; border-color: var(--green-dark); font-weight: 600; }
+    .wl-acct-nav-signout { flex: 0 0 100%; margin-top: 4px; color: #e53e3e; }
+    .wl-acct-nav-signout:hover { background: #fff5f5; color: #c53030; border-color: #e53e3e; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .wl-acct-nav-wrap { display: block; }
+    }
+    @media (max-width: 900px) {
+      /* products-grid-3 auto-fills based on minmax(184px) */
+    }
+    @media (max-width: 600px) {
+      .wl-reco-card { width: 168px; }
+      .wl-page { padding: 20px 0 48px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script src="/js/data.js"></script>
+  <script src="/js/state.js"></script>
+  <script src="/js/components.js"></script>
+  <script>
+    injectStorefrontShell();
+
+    // ── Seed demo wishlist if empty ──
+    (function seedWishlist() {
+      const current = NM.getWishlist();
+      if (current.length === 0) {
+        NM.setWishlist([1, 8, 4, 10, 5, 9]);
+      }
+    })();
+
+    // ── Helpers ──
+    function getDiscount(p) {
+      if (!p.sale) return 0;
+      return Math.round(((p.price - p.sale) / p.price) * 100);
+    }
+
+    // ── Account nav grid (mobile) ──
+    function renderWlAccountNav() {
+      const user = NM.getUser();
+      if (!user) return '';
+      const items = [
+        { href: '/account/dashboard',                  icon: '📋', label: 'My Quotes'    },
+        { href: '/account/dashboard?tab=orders',       icon: '📦', label: 'My Orders'    },
+        { href: '/wishlist',                           icon: '♡',  label: 'Wishlist', active: true },
+        { href: '/account/settings',                   icon: '👤', label: 'Profile'      },
+        { href: '/account/settings?tab=addresses',     icon: '📍', label: 'Addresses'    },
+        { href: '/account/settings?tab=gst',           icon: '🧾', label: 'GST'          },
+        { href: '/account/settings?tab=security',      icon: '🔐', label: 'Security'     },
+        { href: '/account/settings?tab=notifications', icon: '🔔', label: 'Notifications'}
+      ];
+      return '<div class="wl-acct-nav-wrap"><div class="wl-acct-nav">' +
+        items.map(function(item) {
+          return '<a href="' + item.href + '" class="wl-acct-nav-tab' + (item.active ? ' active' : '') + '">' +
+            '<span style="font-size:15px;line-height:1">' + item.icon + '</span>' +
+            item.label + '</a>';
+        }).join('') +
+        '<button class="wl-acct-nav-tab wl-acct-nav-signout" onclick="NM.logout()" type="button">' +
+          '<span style="font-size:15px;line-height:1">⎋</span> Sign Out' +
+        '</button>' +
+      '</div></div>';
+    }
+
+    // ── Main render ──
+    function renderWishlist() {
+      const wishlistIds = NM.getWishlist();
+      const allProducts = window.NM_DATA.products;
+
+      const wishlistItems = wishlistIds
+        .map(id => allProducts.find(p => p.id === id))
+        .filter(Boolean);
+
+      const inWishlistSet = new Set(wishlistIds);
+      const recoProducts = allProducts
+        .filter(p => !inWishlistSet.has(p.id))
+        .slice(0, 6);
+
+      const main = document.getElementById('main-content');
+      if (!main) return;
+
+      let html = `
+        <div class="wl-page">
+          <div class="container">
+            ${renderWlAccountNav()}
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+              <a href="/">Home</a>
+              <span class="breadcrumb-sep">›</span>
+              <span>Wishlist</span>
+            </nav>
+
+            <!-- Page header -->
+            <div class="wl-header">
+              <div class="wl-title-group">
+                <div class="wl-heading">
+                  My Wishlist
+                  ${wishlistItems.length > 0
+                    ? `<span class="wl-count-pill">${wishlistItems.length} item${wishlistItems.length !== 1 ? 's' : ''}</span>`
+                    : ''}
+                </div>
+              </div>
+              ${wishlistItems.length > 0 ? `
+                <div class="wl-actions">
+                  <a href="/shop.html" class="btn btn-outline btn-sm">Continue Shopping</a>
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- State A: Has items -->
+            ${wishlistItems.length > 0 ? `
+              <div class="products-grid-3" id="wl-grid">
+                ${wishlistItems.map(p => renderWishlistCard(p)).join('')}
+              </div>
+            ` : `
+              <!-- State B: Empty -->
+              <div class="wl-empty">
+                <div class="wl-empty-icon">❤️</div>
+                <div class="wl-empty-heading">Your wishlist is empty</div>
+                <p class="wl-empty-sub">Save items you love by tapping the heart icon on any product. They'll be right here when you're ready.</p>
+                <a href="/shop.html" class="btn btn-primary btn-lg">Browse Products</a>
+              </div>
+            `}
+
+            <!-- Recommendations -->
+            ${recoProducts.length > 0 ? `
+              <div class="wl-reco-section">
+                <div class="wl-reco-header">
+                  <div class="wl-reco-title">Recommended for you</div>
+                  <a href="/shop.html" class="btn btn-ghost btn-sm">View all →</a>
+                </div>
+                <div class="wl-reco-wrap">
+                  <div class="wl-reco-scroll" id="wl-reco-scroll">
+                    ${recoProducts.map(p => renderRecoCard(p)).join('')}
+                  </div>
+                </div>
+              </div>
+            ` : ''}
+
+          </div>
+        </div>
+      `;
+
+      main.innerHTML = html;
+    }
+
+    function renderWishlistCard(p) {
+      const salePrice = p.sale || p.price;
+      const mrp = p.sale ? p.price : null;
+      const discount = mrp ? Math.round((mrp - salePrice) / mrp * 100) : 0;
+      return `
+        <div class="wl-card" style="cursor:pointer" onclick="window.location.href='/product?id=${p.id}'">
+          <div class="wl-card-img" style="overflow:hidden;">
+            <span class="wl-heart-mark">❤️</span>
+            <img src="${p.img}" alt="${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
+            <button
+              class="wl-remove-btn"
+              title="Remove from wishlist"
+              onclick="event.stopPropagation();handleRemove(${p.id})"
+              aria-label="Remove ${p.name} from wishlist"
+            >✕</button>
+            ${p.badge ? `<span class="wl-discount-badge" style="background:${p.badge.c}">${p.badge.l}</span>` : ''}
+          </div>
+          <div class="wl-card-body">
+            <div class="wl-card-brand">${p.brand}</div>
+            <div class="wl-card-name">${p.name}</div>
+            <div class="wl-card-price-row">
+              <span class="wl-card-price">${NM.fmt(salePrice)}</span>
+              ${mrp ? `<span class="wl-card-original">${NM.fmt(mrp)}</span>` : ''}
+            </div>
+            ${!p.inStock ? `<span class="wl-card-stock-out">Out of stock</span>` : ''}
+            <div class="wl-card-actions">
+              <button
+                class="wl-cart-btn"
+                ${!p.inStock ? 'disabled' : ''}
+                onclick="${p.inStock ? `event.stopPropagation();handleMoveToCart(${p.id})` : 'event.stopPropagation()'}"
+                aria-label="Move ${p.name} to cart"
+              >
+                + Move to Cart
+              </button>
+              <button
+                class="wl-del-btn"
+                title="Remove"
+                onclick="event.stopPropagation();handleRemove(${p.id})"
+                aria-label="Remove from wishlist"
+              >🗑</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderRecoCard(p) {
+      const salePrice = p.sale || p.price;
+      return `
+        <div class="wl-reco-card" onclick="window.location='/shop.html'" tabindex="0" role="button" aria-label="View ${p.name}">
+          <div class="wl-reco-img" style="overflow:hidden;background:#f5f5f5;">
+            <img src="${p.img}" alt="${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="wl-reco-body">
+            <div class="wl-reco-brand">${p.brand}</div>
+            <div class="wl-reco-name">${p.name}</div>
+            <div class="wl-reco-price">${NM.fmt(salePrice)}</div>
+            <button
+              class="wl-reco-add"
+              onclick="event.stopPropagation(); handleRecoAddToWishlist(${p.id}, this)"
+              aria-label="Save ${p.name} to wishlist"
+            >+ Save to Wishlist</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // ── Action handlers ──
+    function handleMoveToCart(productId) {
+      const product = window.NM_DATA.products.find(p => p.id === productId);
+      if (!product) return;
+      NM.addToCart(product, 1);
+      NM.toggleWishlist(productId);
+      showToast(`"${product.name}" moved to cart`, 'success');
+      renderWishlist();
+    }
+
+    function handleRemove(productId) {
+      const product = window.NM_DATA.products.find(p => p.id === productId);
+      NM.toggleWishlist(productId);
+      if (product) showToast(`"${product.name}" removed from wishlist`, 'info');
+      renderWishlist();
+    }
+
+    function handleRecoAddToWishlist(productId, btn) {
+      const product = window.NM_DATA.products.find(p => p.id === productId);
+      if (!product) return;
+      const added = NM.toggleWishlist(productId);
+      if (added) {
+        btn.textContent = '❤️ Saved';
+        btn.style.background = '#fee2e2';
+        btn.style.color = '#dc2626';
+        btn.style.borderColor = '#fca5a5';
+        showToast(`"${product.name}" added to wishlist`, 'success');
+        // Re-render after short delay so user sees the confirmation
+        setTimeout(renderWishlist, 900);
+      } else {
+        showToast(`"${product.name}" removed from wishlist`, 'info');
+        renderWishlist();
+      }
+    }
+
+    // ── Initial render ──
+    renderWishlist();
+  </script>
+</body>
+</html>

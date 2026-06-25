@@ -1,0 +1,778 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offers & Deals — Padmavathi Traders</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* ── Offers page local styles ── */
+
+    /* Hero */
+    .offers-hero {
+      background: linear-gradient(140deg, #0d4f39 0%, #1a7a56 45%, #2e9a6a 100%);
+      padding: 64px 0 56px;
+      position: relative;
+      overflow: hidden;
+    }
+    .offers-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    /* faint grid lines */
+    .offers-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+    .offers-hero-inner {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+    .offers-hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.22);
+      color: #c6f0dc;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .offers-hero h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.15;
+      text-wrap: balance;
+      margin-bottom: 14px;
+    }
+    .offers-hero-subtitle {
+      font-size: 16px;
+      color: rgba(255,255,255,.78);
+      max-width: 480px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    /* Countdown */
+    .countdown-grid {
+      display: inline-flex;
+      gap: 12px;
+      align-items: flex-start;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .countdown-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .countdown-item .countdown-num {
+      background: #143d2b;
+      border: 1px solid rgba(255,255,255,.12);
+      color: #fff;
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      width: 96px;
+      height: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,.28);
+      letter-spacing: -1px;
+    }
+    .countdown-item .countdown-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,.6);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .countdown-sep {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: rgba(255,255,255,.3);
+      line-height: 88px;
+      margin-top: 0;
+    }
+
+    /* Section chrome */
+    .offers-section {
+      padding: 56px 0;
+    }
+    .offers-section + .offers-section {
+      border-top: 1px solid var(--border-light);
+    }
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      margin-bottom: 8px;
+    }
+    .section-heading {
+      font-family: var(--font-heading);
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
+      font-weight: 700;
+      color: var(--text-dark);
+      text-wrap: balance;
+      margin-bottom: 6px;
+    }
+    .section-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    /* Coupons */
+    .coupons-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .coupon-card {
+      border: 2px dashed #3BB77E;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f6fdf9 0%, #eafff4 100%);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .coupon-card::before {
+      content: '';
+      position: absolute;
+      top: -24px;
+      right: -24px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(59,183,126,.12);
+    }
+    .coupon-card::after {
+      content: '';
+      position: absolute;
+      bottom: -16px;
+      left: -16px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(31,107,77,.08);
+    }
+    .coupon-type-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green-dark);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .coupon-code {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      letter-spacing: 2px;
+      background: rgba(31,107,77,.08);
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+    .coupon-desc {
+      font-size: 14px;
+      color: var(--text-base);
+      line-height: 1.5;
+      flex: 1;
+    }
+    .coupon-min {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: -4px;
+    }
+    .btn-copy {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--green-dark);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-btn);
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .18s, transform .12s;
+    }
+    .btn-copy:hover { background: #174f39; transform: translateY(-1px); }
+    .btn-copy:active { transform: translateY(0); }
+
+    /* Flash Deals grid */
+    .flash-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .flash-header-text { flex: 1; }
+    .flash-live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fee2e2;
+      color: #991b1b;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      flex-shrink: 0;
+    }
+    .flash-live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ef4444;
+      animation: pulse-dot 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .35; }
+    }
+
+    /* Product card overrides for deals */
+    .deal-card {
+      background: var(--bg-page);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border-light);
+      overflow: hidden;
+      transition: box-shadow .18s, transform .18s;
+      position: relative;
+    }
+    .deal-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+    }
+    .deal-card-img {
+      aspect-ratio: 1 / 1;
+      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 46px;
+      position: relative;
+    }
+    .discount-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 7px;
+      letter-spacing: .02em;
+      pointer-events: none;
+    }
+    .deal-card-body {
+      padding: 14px 14px 16px;
+    }
+    .deal-card-brand {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 3px;
+    }
+    .deal-card-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-dark);
+      line-height: 1.4;
+      margin-bottom: 10px;
+      min-height: 38px;
+    }
+    .deal-card-pricing {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .deal-price-current {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--green-dark);
+      font-variant-numeric: tabular-nums;
+    }
+    .deal-price-original {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      text-decoration: line-through;
+      font-variant-numeric: tabular-nums;
+    }
+    .deal-card-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .deal-cart-btn {
+      flex: 1;
+      background: var(--green-mid);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-btn);
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .deal-cart-btn:hover { background: var(--green-dark); }
+    .deal-wish-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      font-size: 16px;
+      transition: all .15s;
+    }
+    .deal-wish-btn:hover, .deal-wish-btn.wishlisted { border-color: #ef4444; background: #fee2e2; }
+
+    /* Bulk Discount Table */
+    .bulk-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+    }
+    .bulk-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .bulk-table thead th {
+      background: var(--green-dark);
+      color: #fff;
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .3px;
+      padding: 14px 24px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .bulk-table thead th:first-child { border-radius: 10px 0 0 0; }
+    .bulk-table thead th:last-child { border-radius: 0 10px 0 0; }
+    .bulk-table tbody tr { transition: background .12s; }
+    .bulk-table tbody tr:nth-child(odd) { background: var(--bg-page); }
+    .bulk-table tbody tr:nth-child(even) { background: #f3fdf8; }
+    .bulk-table tbody tr:hover { background: var(--green-light); }
+    .bulk-table tbody tr:last-child td { border-bottom: none; }
+    .bulk-table td {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 14.5px;
+      vertical-align: middle;
+      font-variant-numeric: tabular-nums;
+    }
+    .bulk-table td:first-child { font-weight: 600; color: var(--text-dark); }
+    .bulk-discount-pct {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+    .bulk-discount-pct .pct-badge {
+      background: var(--green-light);
+      border: 1px solid rgba(59,183,126,.3);
+      color: var(--green-dark);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .bulk-saving {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .bulk-saving strong {
+      color: #ef4444;
+      font-weight: 700;
+    }
+
+    /* CTA strip */
+    .offers-cta-strip {
+      background: linear-gradient(135deg, #0d4f39, #1f6b4d);
+      border-radius: var(--radius-card);
+      padding: 36px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 56px;
+    }
+    .offers-cta-strip h3 {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+      text-wrap: balance;
+      margin-bottom: 6px;
+    }
+    .offers-cta-strip p {
+      font-size: 14px;
+      color: rgba(255,255,255,.72);
+      max-width: 360px;
+    }
+    .btn-white {
+      background: #fff;
+      color: var(--green-dark);
+      border: none;
+      border-radius: var(--radius-btn);
+      padding: 12px 26px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background .15s, transform .12s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-white:hover { background: #eafff4; transform: translateY(-1px); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .coupons-grid { grid-template-columns: repeat(2, 1fr); }
+      .products-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 660px) {
+      .coupons-grid { grid-template-columns: 1fr; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+      .countdown-item .countdown-num { width: 72px; height: 68px; font-size: 1.8rem; }
+      .offers-cta-strip { padding: 28px 24px; }
+      .bulk-table td, .bulk-table thead th { padding: 12px 16px; }
+    }
+    @media (max-width: 420px) {
+      .products-grid { grid-template-columns: 1fr; }
+      .countdown-sep { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<script src="/js/data.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/components.js"></script>
+<script>
+  injectStorefrontShell();
+
+  // ── Data ──────────────────────────────────────────────────────────────────
+  const DEALS = [
+    {id:1,  name:'Parker Jotter Ball Pen',           brand:'Parker',       cat:'Pens & Writing',     img:NM_IMG.nib,       price:450, sale:399},
+    {id:3,  name:'Faber-Castell 24 Colour Pencils',  brand:'Faber-Castell',cat:'Art & Craft',        img:NM_IMG.pencils,   price:320, sale:270},
+    {id:7,  name:'Sticky Notes Combo · 5 × 100',     brand:'Oddy',         cat:'Office Supplies',    img:NM_IMG.sticky,    price:120, sale:99},
+    {id:13, name:'JK A4 Copier Paper · 500 Sheets',  brand:'JK',           cat:'Office Supplies',    img:NM_IMG.paperdoc,  price:340, sale:289},
+    {id:14, name:'Classmate Hardbound Register Set',  brand:'Classmate',    cat:'Notebooks & Journals',img:NM_IMG.books,   price:650, sale:520},
+    {id:15, name:'Maped Geometry Box',               brand:'Maped',        cat:'School Supplies',    img:NM_IMG.craftkit,  price:220, sale:175},
+    {id:16, name:'Camlin Kraft Gift Bags · 10 pk',   brand:'Camlin',       cat:'Paper & Notepads',   img:NM_IMG.kraftbag,  price:140, sale:99},
+    {id:22, name:'Solo Metal Desk Organizer',        brand:'Solo',         cat:'Desk Accessories',   img:NM_IMG.markers,   price:599, sale:449}
+  ];
+  const flashDeals = DEALS;
+
+  const coupons = [
+    { code:'FRESH50',  big:'₹50',  bigSub:'off', accent:'#1f6b4d', tint:'#f0fdf4', headline:'₹50 off your first quote', desc:'On orders over ₹999. New customers only.' },
+    { code:'BULK15',   big:'15%',  bigSub:'off', accent:'#b45309', tint:'#fffbeb', headline:'15% off bulk orders',       desc:'Quotes above ₹10,000. Stacks with tier pricing.' },
+    { code:'ARTLOVE',  big:'20%',  bigSub:'off', accent:'#7c3aed', tint:'#f5f3ff', headline:'20% off Art & Craft',       desc:'Paints, brushes, pencils & sketch pads.' }
+  ];
+
+  const bulkTiers = [
+    { range:'Orders over ₹5,000',  pct:'8%',  tint:'#eafff4', fg:'#1f6b4d', bd:'#d4eee2', sub:'8% off your quote total',                    flag:false },
+    { range:'Orders over ₹15,000', pct:'15%', tint:'#fef3c7', fg:'#b45309', bd:'#fde68a', sub:'15% off your quote total',                   flag:false },
+    { range:'Orders over ₹40,000', pct:'22%', tint:'#1f6b4d', fg:'#fff',    bd:'#cdeede', sub:'22% off + free delivery — best value',       flag:true  }
+  ];
+
+  // ── Countdown target: 2027-01-01T00:00:00 ─────────────────────────────────
+  const DEAL_END = new Date('2027-01-01T00:00:00').getTime();
+
+  function getCountdownParts() {
+    const diff = DEAL_END - Date.now();
+    if (diff <= 0) return { d: 0, h: 0, m: 0, s: 0 };
+    const s = Math.floor(diff / 1000);
+    return {
+      d: Math.floor(s / 86400),
+      h: Math.floor((s % 86400) / 3600),
+      m: Math.floor((s % 3600) / 60),
+      s: s % 60
+    };
+  }
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function pct(price, orig) {
+    return Math.round((1 - price / orig) * 100);
+  }
+
+  // ── Build the page ─────────────────────────────────────────────────────────
+  const mainContent = document.getElementById('main-content');
+
+  mainContent.innerHTML = `
+    <!-- Hero -->
+    <section class="offers-hero">
+      <div class="container">
+        <div class="offers-hero-inner">
+          <div class="offers-hero-eyebrow">
+            <span>🎉</span> Limited Time Deals
+          </div>
+          <h1>Exclusive Offers &amp; Deals</h1>
+          <p class="offers-hero-subtitle">
+            Limited time discounts on bulk stationery and art supplies. Serving schools,
+            colleges &amp; offices across Hyderabad since 1968.
+          </p>
+          <!-- Countdown -->
+          <div class="countdown-grid" id="countdown-grid">
+            <div class="countdown-item">
+              <div class="countdown-num" id="cd-days">00</div>
+              <div class="countdown-label">Days</div>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-item">
+              <div class="countdown-num" id="cd-hours">00</div>
+              <div class="countdown-label">Hours</div>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-item">
+              <div class="countdown-num" id="cd-mins">00</div>
+              <div class="countdown-label">Minutes</div>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-item">
+              <div class="countdown-num" id="cd-secs">00</div>
+              <div class="countdown-label">Seconds</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Coupons -->
+    <section class="offers-section" style="background: var(--bg-page);">
+      <div class="container">
+        <p class="section-eyebrow">Coupons to stack</p>
+        <h2 class="section-heading">Apply at quote request</h2>
+        <p class="section-sub">Apply any code at quote request — savings show on your official PDF.</p>
+        <div class="coupons-grid">
+          ${coupons.map(c => `
+            <div class="coupon-card" style="background:${c.tint};border-color:${c.accent}40;">
+              <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px">
+                <span style="font-family:var(--font-heading);font-size:36px;font-weight:700;color:${c.accent}">${c.big}</span>
+                <span style="font-size:14px;font-weight:600;color:${c.accent}">${c.bigSub}</span>
+              </div>
+              <div style="font-size:15px;font-weight:700;color:var(--text-dark);margin-bottom:4px">${c.headline}</div>
+              <div class="coupon-desc" style="margin-bottom:10px">${c.desc}</div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <code style="font-family:monospace;font-size:16px;font-weight:700;letter-spacing:2px;color:${c.accent};padding:5px 10px;background:rgba(0,0,0,.06);border-radius:6px">${c.code}</code>
+                <button class="btn-copy" onclick="copyCode('${c.code}', this)">
+                  Copy
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+
+    <!-- Flash Deals -->
+    <section class="offers-section" style="background: var(--bg-outer);">
+      <div class="container">
+        <div class="flash-header">
+          <div class="flash-header-text">
+            <p class="section-eyebrow">Best value right now</p>
+            <h2 class="section-heading" style="margin-bottom:0">Flash Deals</h2>
+          </div>
+          <div class="flash-live-pill">
+            <span class="flash-live-dot"></span>
+            Sale Live
+          </div>
+        </div>
+        <div class="products-grid" id="flash-deals-grid">
+          <!-- rendered below -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Bulk Discount Tiers -->
+    <section class="offers-section" style="background: var(--bg-page);">
+      <div class="container">
+        <div style="text-align:center;margin-bottom:32px">
+          <span style="display:inline-block;padding:4px 14px;border-radius:20px;background:var(--green-light);color:var(--green-dark);font-size:12px;font-weight:700;letter-spacing:.5px;margin-bottom:10px">For Businesses &amp; Institutions</span>
+          <h2 class="section-heading">The more you order, the more you save</h2>
+          <p class="section-sub">Bulk tier discounts apply automatically on top of your quote — no coupon needed.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px">
+          ${bulkTiers.map(t => `
+            <div style="background:${t.tint};border:2px solid ${t.bd};border-radius:14px;padding:28px 24px;position:relative;${t.flag ? 'border-color:'+t.fg+';' : ''}">
+              ${t.flag ? `<div style="position:absolute;top:-10px;right:16px;background:#1f6b4d;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">Best value</div>` : ''}
+              <div style="font-family:var(--font-heading);font-size:40px;font-weight:700;color:${t.fg};margin-bottom:4px">${t.pct}</div>
+              <div style="font-size:15px;font-weight:700;color:${t.fg === '#fff' ? '#fff' : 'var(--text-dark)'};margin-bottom:4px">${t.range}</div>
+              <div style="font-size:13px;color:${t.fg === '#fff' ? 'rgba(255,255,255,.8)' : 'var(--text-muted)'}">${t.sub}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- CTA Strip -->
+        <div class="offers-cta-strip">
+          <div>
+            <h3>Need a custom quote for your institution?</h3>
+            <p>Our team prepares personalised quotes with GST-compliant invoicing, usually within 1 business day.</p>
+          </div>
+          <a href="/cart.html" class="btn-white">
+            📋 Request a Bulk Quote →
+          </a>
+        </div>
+      </div>
+    </section>
+  `;
+
+  // ── Render flash deals ─────────────────────────────────────────────────────
+  function renderFlashDeals() {
+    const grid = document.getElementById('flash-deals-grid');
+    if (!grid) return;
+
+    grid.innerHTML = flashDeals.map(p => {
+      const fullProduct = (window.NM_DATA.products || []).find(pr => pr.id === p.id);
+      const badge = fullProduct && fullProduct.badge ? fullProduct.badge : null;
+      const disc = Math.round((p.price - p.sale) / p.price * 100);
+      const badgeLabel = badge ? badge.l : ('-' + disc + '%');
+      const badgeColor = badge ? badge.c : '#F59E0B';
+      const wished = NM.inWishlist(p.id);
+      return `
+        <div class="deal-card" style="cursor:pointer" onclick="window.location.href='/product?id=${p.id}'">
+          <div class="deal-card-img" style="overflow:hidden;">
+            <img src="${p.img}" alt="${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
+            <span class="discount-badge" style="background:${badgeColor}">${badgeLabel}</span>
+          </div>
+          <div class="deal-card-body">
+            <div class="deal-card-brand">${p.brand}</div>
+            <div class="deal-card-name">${p.name}</div>
+            <div class="deal-card-pricing">
+              <span class="deal-price-current">${NM.fmt(p.sale)}</span>
+              <span class="deal-price-original">${NM.fmt(p.price)}</span>
+            </div>
+            <div class="deal-card-actions">
+              <button class="deal-cart-btn" onclick="event.stopPropagation();addToCart(${p.id})">Add to Cart</button>
+              <button class="deal-wish-btn${wished ? ' wishlisted' : ''}" id="wish-${p.id}" onclick="event.stopPropagation();toggleWish(${p.id})" title="Wishlist" aria-label="Toggle wishlist">
+                ${wished ? '❤️' : '🤍'}
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  renderFlashDeals();
+
+  // ── Actions ────────────────────────────────────────────────────────────────
+  function addToCart(id) {
+    const deal = DEALS.find(p => p.id === id);
+    const product = NM_DATA.products.find(p => p.id === id);
+    const p = product || deal;
+    if (!p) return;
+    NM.addToCart({ id: p.id, name: p.name, price: p.sale || p.price, img: p.img }, 1);
+    showToast(`${p.name.split('·')[0].trim()} added to cart`, 'success');
+    _updateCartBadge();
+  }
+
+  function toggleWish(id) {
+    const added = NM.toggleWishlist(id);
+    const btn = document.getElementById('wish-' + id);
+    if (btn) {
+      btn.innerHTML = added ? '❤️' : '🤍';
+      btn.classList.toggle('wishlisted', added);
+    }
+    showToast(added ? 'Saved to wishlist' : 'Removed from wishlist', added ? 'success' : 'info');
+  }
+
+  function copyCode(code, btn) {
+    navigator.clipboard.writeText(code).then(() => {
+      showToast('Coupon code copied!', 'success');
+      const orig = btn.innerHTML;
+      btn.innerHTML = `<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+      btn.style.background = '#16a34a';
+      setTimeout(() => {
+        btn.innerHTML = orig;
+        btn.style.background = '';
+      }, 2000);
+    }).catch(() => {
+      // Fallback for non-HTTPS / old browsers
+      const el = document.createElement('textarea');
+      el.value = code;
+      el.style.position = 'fixed';
+      el.style.opacity = '0';
+      document.body.appendChild(el);
+      el.focus();
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      showToast('Coupon code copied!', 'success');
+    });
+  }
+
+  // ── Countdown tick ─────────────────────────────────────────────────────────
+  function tickCountdown() {
+    const { d, h, m, s } = getCountdownParts();
+    const cdDays  = document.getElementById('cd-days');
+    const cdHours = document.getElementById('cd-hours');
+    const cdMins  = document.getElementById('cd-mins');
+    const cdSecs  = document.getElementById('cd-secs');
+    if (cdDays)  cdDays.textContent  = pad(d);
+    if (cdHours) cdHours.textContent = pad(h);
+    if (cdMins)  cdMins.textContent  = pad(m);
+    if (cdSecs)  cdSecs.textContent  = pad(s);
+  }
+
+  tickCountdown(); // immediate first render
+  setInterval(tickCountdown, 1000);
+</script>
+</body>
+</html>

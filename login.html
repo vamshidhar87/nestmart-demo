@@ -1,0 +1,887 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Register — Padmavathi Traders</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* ── Login page override — no storefront shell on this page ── */
+    body {
+      background: #f0f4f1;
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .login-root {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    /* ── Left brand panel ── */
+    .login-brand {
+      width: 40%;
+      flex-shrink: 0;
+      background: linear-gradient(160deg, #1f6b4d 0%, #2e8e63 55%, #3BB77E 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 48px 44px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle decorative rings */
+    .login-brand::before {
+      content: '';
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.08);
+      top: -120px;
+      right: -160px;
+      pointer-events: none;
+    }
+    .login-brand::after {
+      content: '';
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.06);
+      bottom: 60px;
+      left: -80px;
+      pointer-events: none;
+    }
+
+    .brand-top {
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: rgba(255,255,255,0.65);
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: color .15s;
+      margin-bottom: 48px;
+    }
+    .brand-back:hover { color: rgba(255,255,255,0.92); }
+    .brand-back svg { width: 14px; height: 14px; }
+
+    .brand-store-emoji {
+      font-size: 52px;
+      line-height: 1;
+      margin-bottom: 20px;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.18));
+    }
+
+    .brand-name {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.25;
+      text-wrap: balance;
+      margin-bottom: 10px;
+    }
+
+    .brand-tagline {
+      font-size: 14px;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.6;
+      max-width: 280px;
+    }
+
+    .brand-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand-badge {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 20px;
+      padding: 5px 13px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.88);
+      font-weight: 500;
+    }
+
+    .brand-testimonial {
+      position: relative;
+      z-index: 1;
+      background: rgba(0,0,0,0.14);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 20px 22px;
+      backdrop-filter: blur(8px);
+    }
+
+    .brand-testimonial-quote {
+      font-size: 14px;
+      color: rgba(255,255,255,0.9);
+      line-height: 1.6;
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+
+    .brand-testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-testimonial-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .brand-testimonial-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+    .brand-testimonial-role {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 1px;
+    }
+
+    /* ── Right auth panel ── */
+    .login-auth {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 32px;
+      overflow-y: auto;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .auth-card-header {
+      margin-bottom: 28px;
+    }
+
+    .auth-card-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+
+    .auth-card-header p {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ── Custom tab style for auth page ── */
+    .auth-tabs {
+      display: flex;
+      background: var(--bg-outer);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 28px;
+      gap: 4px;
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      padding: 9px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: none;
+      background: none;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all .18s;
+    }
+
+    .auth-tab-btn.active {
+      background: #ffffff;
+      color: var(--green-dark);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    }
+
+    .auth-tab-btn:not(.active):hover {
+      color: var(--text-dark);
+    }
+
+    .auth-tab-content {
+      display: none;
+    }
+    .auth-tab-content.active {
+      display: block;
+    }
+
+    /* ── Form fields ── */
+    .auth-field {
+      margin-bottom: 16px;
+    }
+
+    .auth-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+
+    .auth-field input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      color: var(--text-dark);
+      font-size: 15px;
+      font-family: var(--font-body);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .auth-field input:focus {
+      border-color: var(--green-mid);
+      box-shadow: 0 0 0 3px rgba(59,183,126,0.12);
+    }
+
+    .auth-field input::placeholder {
+      color: var(--text-light);
+    }
+
+    .auth-submit-btn {
+      width: 100%;
+      padding: 13px 20px;
+      background: var(--green-dark);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-btn);
+      font-size: 15px;
+      font-weight: 700;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: background .18s, transform .1s;
+      margin-top: 6px;
+    }
+
+    .auth-submit-btn:hover {
+      background: #185a40;
+    }
+
+    .auth-submit-btn:active {
+      transform: scale(0.99);
+    }
+
+    .auth-forgot {
+      text-align: right;
+      margin-top: -8px;
+      margin-bottom: 16px;
+    }
+
+    .auth-forgot a {
+      font-size: 13px;
+      color: var(--green-dark);
+      font-weight: 500;
+    }
+
+    .auth-forgot a:hover {
+      text-decoration: underline;
+    }
+
+    .auth-divider {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 18px 0;
+    }
+
+    .auth-switch {
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 20px;
+    }
+
+    .auth-switch a {
+      color: var(--green-dark);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ── OTP step ── */
+    .otp-step {
+      display: none;
+    }
+
+    .otp-step.active {
+      display: block;
+    }
+
+    .otp-info {
+      background: var(--green-light);
+      border: 1px solid rgba(59,183,126,0.25);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .otp-info-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .otp-info p {
+      font-size: 13px;
+      color: var(--green-dark);
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .otp-boxes {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 22px 0;
+    }
+
+    .otp-box {
+      width: 48px;
+      height: 54px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      color: var(--text-dark);
+      font-family: var(--font-body);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .otp-box:focus {
+      border-color: var(--green-mid);
+      box-shadow: 0 0 0 3px rgba(59,183,126,0.12);
+    }
+
+    .otp-box.filled {
+      border-color: var(--green-mid);
+      background: var(--green-light);
+    }
+
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .login-root {
+        flex-direction: column;
+      }
+      .login-brand {
+        width: 100%;
+        padding: 32px 24px;
+        min-height: auto;
+      }
+      .brand-back { margin-bottom: 24px; }
+      .brand-store-emoji { font-size: 40px; margin-bottom: 12px; }
+      .brand-name { font-size: 22px; }
+      .brand-badges { margin-top: 20px; }
+      .brand-testimonial { display: none; }
+      .login-auth { padding: 32px 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+
+    /* ── Continue Shopping strip ── */
+    .auth-guest-strip {
+      margin-top: 24px;
+    }
+    .auth-guest-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      color: var(--text-light);
+      font-size: 12px;
+    }
+    .auth-guest-divider::before,
+    .auth-guest-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-light);
+    }
+    .auth-guest-divider span {
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      font-weight: 600;
+    }
+    .auth-guest-link {
+      display: block;
+      text-align: center;
+      padding: 11px 20px;
+      border: 1.5px solid var(--border-light);
+      border-radius: var(--radius-btn);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: border-color .15s, color .15s, background .15s;
+    }
+    .auth-guest-link:hover {
+      border-color: var(--green-mid);
+      color: var(--green-dark);
+      background: var(--green-light);
+    }
+  </style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script src="/js/data.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/components.js"></script>
+
+<script>
+(function() {
+  // Render standalone login layout — no storefront shell
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="login-root">
+
+      <!-- Left brand panel -->
+      <div class="login-brand">
+        <a href="/" title="Back to storefront" style="position:absolute;top:16px;right:16px;z-index:10;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.15);color:rgba(255,255,255,.85);font-size:16px;text-decoration:none;line-height:1;transition:background .15s,color .15s" onmouseover="this.style.background='rgba(255,255,255,.28)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,.15)';this.style.color='rgba(255,255,255,.85)'">✕</a>
+        <!-- TVR Logo + name -->
+        <div style="display:flex;align-items:center;gap:11px;position:relative">
+          <svg width="44" height="44" viewBox="0 0 56 56" style="flex-shrink:0"><rect width="56" height="56" rx="15" fill="#fff"/><text x="28" y="34" text-anchor="middle" font-family="'Bricolage Grotesque',Georgia,sans-serif" font-size="17" font-weight="800" fill="#1f6b4d" letter-spacing="0.5">TVR</text><path d="M13 43 Q28 50 43 43" stroke="#F59E0B" stroke-width="3.6" fill="none" stroke-linecap="round"/></svg>
+          <div>
+            <div style="font-size:19px;font-weight:800;color:#fff;line-height:1;font-family:var(--font-heading)">Padmavathi Traders</div>
+            <div style="font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:#7fe3b4;font-weight:700;margin-top:3px">Stationery &amp; Art · Est. 1968</div>
+          </div>
+        </div>
+
+        <!-- Main pitch -->
+        <div style="margin-top:auto;position:relative">
+          <div style="font-size:26px;font-weight:800;color:#fff;line-height:1.18;letter-spacing:-.02em;font-family:var(--font-heading)">Stationery &amp; art supplies, sourced for serious buyers.</div>
+          <div style="font-size:13.5px;color:rgba(255,255,255,.8);margin-top:14px;line-height:1.6;max-width:300px">Sign in to request bulk quotes, track orders, and reorder in a tap — for your office, school, college, or studio.</div>
+          <div style="display:flex;flex-direction:column;gap:13px;margin-top:26px">
+            <div style="display:flex;gap:11px;align-items:center;font-size:13px;color:rgba(255,255,255,.92)"><span style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">📋</span> Custom bulk quotes &amp; revisions</div>
+            <div style="display:flex;gap:11px;align-items:center;font-size:13px;color:rgba(255,255,255,.92)"><span style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🧾</span> GST invoices for registered firms</div>
+            <div style="display:flex;gap:11px;align-items:center;font-size:13px;color:rgba(255,255,255,.92)"><span style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🚚</span> Fast delivery across Hyderabad</div>
+          </div>
+        </div>
+
+        <!-- Testimonial -->
+        <div style="margin-top:30px;padding-top:20px;border-top:1px solid rgba(255,255,255,.14);font-size:12.5px;color:rgba(255,255,255,.7);line-height:1.6;position:relative">"Their quote turnaround saved us hours on our school's annual supplies order."
+          <div style="font-weight:700;color:#fff;margin-top:6px">— Priya N., Bright Future School</div>
+        </div>
+      </div>
+
+      <!-- Right auth panel -->
+      <div class="login-auth">
+        <div class="auth-card">
+
+          <div class="auth-card-header" id="auth-heading">
+            <h1>Sign in to your account</h1>
+            <p>Welcome back — let's get your supplies sorted.</p>
+          </div>
+
+          <!-- Tab switcher -->
+          <div class="auth-tabs" role="tablist">
+            <button class="auth-tab-btn active" id="tab-signin" role="tab" aria-selected="true" onclick="switchTab('signin')">Sign In</button>
+            <button class="auth-tab-btn" id="tab-register" role="tab" aria-selected="false" onclick="switchTab('register')">Create Account</button>
+          </div>
+
+          <!-- Sign In tab -->
+          <div class="auth-tab-content active" id="content-signin">
+
+            <!-- Method switcher -->
+            <div style="display:flex;gap:8px;margin-bottom:18px" id="signin-method-row">
+              <button id="method-pw-btn" onclick="setSignInMethod('password')"
+                style="flex:1;text-align:center;font-size:12.5px;font-weight:700;padding:9px;border-radius:9px;cursor:pointer;border:1.4px solid #3BB77E;background:#f0fdf4;color:#1f6b4d;font-family:inherit">
+                🔑 Password
+              </button>
+              <button id="method-otp-btn" onclick="setSignInMethod('otp')"
+                style="flex:1;text-align:center;font-size:12.5px;font-weight:700;padding:9px;border-radius:9px;cursor:pointer;border:1.4px solid #e6eaee;background:#fff;color:#64748B;font-family:inherit">
+                📲 Phone OTP
+              </button>
+            </div>
+
+            <!-- Password method -->
+            <div id="signin-pw-panel">
+              <form id="signin-form" onsubmit="handleSignIn(event)">
+                <div class="auth-field">
+                  <label for="signin-email">Email or phone</label>
+                  <input type="text" id="signin-email" placeholder="you@example.com" required autocomplete="username">
+                </div>
+                <div class="auth-field">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                    <label for="signin-password" style="margin:0">Password</label>
+                    <a href="#" onclick="return false;" style="font-size:12px;color:#3BB77E;font-weight:700">Forgot?</a>
+                  </div>
+                  <div style="display:flex;border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden">
+                    <input type="password" id="signin-password" placeholder="Your password" required autocomplete="current-password"
+                      style="flex:1;border:none;outline:none;padding:11px 14px;font-size:15px;font-family:var(--font-body);color:var(--text-dark)">
+                    <button type="button" onclick="togglePwVis()" style="padding:0 14px;border:none;background:transparent;color:#94A3B8;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit" id="pw-toggle">Show</button>
+                  </div>
+                </div>
+                <button type="submit" class="auth-submit-btn">Sign In</button>
+              </form>
+            </div>
+
+            <!-- OTP method -->
+            <div id="signin-otp-panel" style="display:none">
+              <div class="auth-field">
+                <label>Phone number</label>
+                <input type="tel" id="signin-phone" placeholder="+91 90000 00000" autocomplete="tel" style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:15px;font-family:var(--font-body);color:var(--text-dark);outline:none">
+              </div>
+              <div id="otp-login-boxes-wrap" style="display:none">
+                <div class="otp-info"><span class="otp-info-icon">📱</span><p id="otp-login-hint">Enter the 6-digit code sent to your phone.</p></div>
+                <div class="otp-boxes">
+                  <input class="otp-box" type="text" maxlength="1" inputmode="numeric" aria-label="OTP digit 1">
+                  <input class="otp-box" type="text" maxlength="1" inputmode="numeric" aria-label="OTP digit 2">
+                  <input class="otp-box" type="text" maxlength="1" inputmode="numeric" aria-label="OTP digit 3">
+                  <input class="otp-box" type="text" maxlength="1" inputmode="numeric" aria-label="OTP digit 4">
+                  <input class="otp-box" type="text" maxlength="1" inputmode="numeric" aria-label="OTP digit 5">
+                  <input class="otp-box" type="text" maxlength="1" inputmode="numeric" aria-label="OTP digit 6">
+                </div>
+              </div>
+              <button class="auth-submit-btn" id="otp-login-btn" onclick="handleOTPLogin()">Send OTP</button>
+            </div>
+
+            <div class="auth-switch">New to Padmavathi Traders? <a onclick="switchTab('register')">Create an account</a></div>
+          </div>
+
+          <!-- Register tab -->
+          <div class="auth-tab-content" id="content-register">
+
+            <!-- Step 1: Details form -->
+            <div id="register-step1">
+              <!-- Buyer type -->
+              <div style="font-size:12.5px;font-weight:700;color:#0f172a;margin-bottom:8px">I'm registering as</div>
+              <div style="display:flex;gap:8px;margin-bottom:16px">
+                <button onclick="setBuyerType('personal')" id="bt-personal"
+                  style="flex:1;text-align:center;font-size:12px;font-weight:700;padding:10px 8px;border-radius:10px;cursor:pointer;border:1.4px solid #e6eaee;background:#fff;color:#64748B;font-family:inherit">
+                  👤 Personal
+                </button>
+                <button onclick="setBuyerType('business')" id="bt-business"
+                  style="flex:1;text-align:center;font-size:12px;font-weight:700;padding:10px 8px;border-radius:10px;cursor:pointer;border:1.4px solid #3BB77E;background:#f0fdf4;color:#1f6b4d;font-family:inherit">
+                  🏢 Business / Institution
+                </button>
+              </div>
+
+              <form id="register-form" onsubmit="handleRegisterStep1(event)">
+                <div class="auth-field">
+                  <label for="reg-name" id="reg-name-label">Organisation name</label>
+                  <input type="text" id="reg-name" placeholder="e.g. Bright Future School" required autocomplete="organization">
+                </div>
+                <div class="auth-field" id="gstin-row">
+                  <label for="reg-gstin">GSTIN <span style="color:#94A3B8;font-weight:400">(optional)</span></label>
+                  <input type="text" id="reg-gstin" placeholder="29ABCDE1234F1Z5" autocomplete="off">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                  <div class="auth-field">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" placeholder="you@email.com" required autocomplete="email">
+                  </div>
+                  <div class="auth-field">
+                    <label for="reg-phone">Phone</label>
+                    <input type="tel" id="reg-phone" placeholder="+91 90000 00000" required autocomplete="tel">
+                  </div>
+                </div>
+                <div class="auth-field">
+                  <label for="reg-password">Password</label>
+                  <input type="password" id="reg-password" placeholder="At least 8 characters" required autocomplete="new-password" minlength="8">
+                </div>
+                <label style="display:flex;align-items:flex-start;gap:8px;margin-bottom:16px;font-size:12px;color:#475569;cursor:pointer;line-height:1.5">
+                  <input type="checkbox" id="reg-terms" style="margin-top:2px;width:14px;height:14px;accent-color:#3BB77E;flex-shrink:0">
+                  <span>I agree to the <a href="#" style="color:#3BB77E;font-weight:700">Terms</a> &amp; <a href="#" style="color:#3BB77E;font-weight:700">Privacy Policy</a>, and to receive quotes via Email &amp; WhatsApp.</span>
+                </label>
+                <button type="submit" class="auth-submit-btn">Create Account</button>
+              </form>
+              <div class="auth-switch">Already have an account? <a onclick="switchTab('signin')">Sign in</a></div>
+            </div>
+
+            <!-- Step 2: OTP verification -->
+            <div id="register-step2" class="otp-step">
+              <div class="otp-info">
+                <span class="otp-info-icon">📱</span>
+                <p id="otp-hint-text">Enter the 6-digit OTP sent to your phone number.</p>
+              </div>
+              <div class="otp-boxes" id="otp-boxes-container">
+                <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 1">
+                <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 2">
+                <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 3">
+                <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 4">
+                <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 5">
+                <input class="otp-box" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP digit 6">
+              </div>
+              <button class="auth-submit-btn" onclick="handleOTPVerify()" id="otp-verify-btn">Verify &amp; Continue</button>
+              <div class="auth-switch" style="margin-top:14px">
+                <a onclick="goBackToRegisterStep1()" style="color:var(--text-muted);font-weight:500">&#8592; Edit details</a>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Continue Shopping -->
+          <div class="auth-guest-strip">
+            <div class="auth-guest-divider"><span>or</span></div>
+            <a href="/shop" class="auth-guest-link">🛍 Continue Shopping without signing in</a>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  `;
+
+  // ── Tab switching ──
+  window.switchTab = function(tab) {
+    ['signin', 'register'].forEach(t => {
+      document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+      document.getElementById('tab-' + t).setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      document.getElementById('content-' + t).classList.toggle('active', t === tab);
+    });
+    const hd = document.getElementById('auth-heading');
+    if (hd) {
+      hd.querySelector('h1').textContent = tab === 'register' ? 'Create your account' : 'Sign in to your account';
+      hd.querySelector('p').textContent = tab === 'register'
+        ? 'Join offices, schools & artists who order with us.'
+        : 'Welcome back — let\'s get your supplies sorted.';
+    }
+  };
+
+  // ── Sign-in method switcher ──
+  let _signinMethod = 'password';
+  window.setSignInMethod = function(method) {
+    _signinMethod = method;
+    const pwPanel = document.getElementById('signin-pw-panel');
+    const otpPanel = document.getElementById('signin-otp-panel');
+    const pwBtn = document.getElementById('method-pw-btn');
+    const otpBtn = document.getElementById('method-otp-btn');
+    const isPassword = method === 'password';
+    if (pwPanel) pwPanel.style.display = isPassword ? '' : 'none';
+    if (otpPanel) otpPanel.style.display = isPassword ? 'none' : '';
+    if (pwBtn) {
+      pwBtn.style.border = isPassword ? '1.4px solid #3BB77E' : '1.4px solid #e6eaee';
+      pwBtn.style.background = isPassword ? '#f0fdf4' : '#fff';
+      pwBtn.style.color = isPassword ? '#1f6b4d' : '#64748B';
+    }
+    if (otpBtn) {
+      otpBtn.style.border = !isPassword ? '1.4px solid #3BB77E' : '1.4px solid #e6eaee';
+      otpBtn.style.background = !isPassword ? '#f0fdf4' : '#fff';
+      otpBtn.style.color = !isPassword ? '#1f6b4d' : '#64748B';
+    }
+  };
+
+  // ── OTP login flow ──
+  let _otpLoginSent = false;
+  window.handleOTPLogin = function() {
+    const phone = (document.getElementById('signin-phone') || {}).value || '';
+    const btn = document.getElementById('otp-login-btn');
+    const wrap = document.getElementById('otp-login-boxes-wrap');
+    if (!_otpLoginSent) {
+      _otpLoginSent = true;
+      if (wrap) wrap.style.display = '';
+      if (btn) btn.textContent = 'Verify & Sign In';
+      showToast('OTP sent via SMS & WhatsApp', 'success');
+      return;
+    }
+    // verify
+    const boxes = document.querySelectorAll('#signin-otp-panel .otp-box');
+    const otp = [...boxes].map(b => b.value).join('');
+    if (otp.length < 6) { showToast('Enter all 6 OTP digits', 'error'); return; }
+    NM.setUser({ name: 'Customer', email: phone });
+    showToast('Signed in!', 'success');
+    setTimeout(() => { window.location.href = '/account/dashboard'; }, 600);
+  };
+
+  // ── Password visibility toggle ──
+  window.togglePwVis = function() {
+    const inp = document.getElementById('signin-password');
+    const btn = document.getElementById('pw-toggle');
+    if (!inp) return;
+    if (inp.type === 'password') { inp.type = 'text'; if (btn) btn.textContent = 'Hide'; }
+    else { inp.type = 'password'; if (btn) btn.textContent = 'Show'; }
+  };
+
+  // ── Buyer type switcher ──
+  let _buyerType = 'business';
+  window.setBuyerType = function(type) {
+    _buyerType = type;
+    const isBusiness = type === 'business';
+    const btPer = document.getElementById('bt-personal');
+    const btBiz = document.getElementById('bt-business');
+    const gstinRow = document.getElementById('gstin-row');
+    const nameLabel = document.getElementById('reg-name-label');
+    const nameInput = document.getElementById('reg-name');
+    if (btPer) {
+      btPer.style.border = !isBusiness ? '1.4px solid #3BB77E' : '1.4px solid #e6eaee';
+      btPer.style.background = !isBusiness ? '#f0fdf4' : '#fff';
+      btPer.style.color = !isBusiness ? '#1f6b4d' : '#64748B';
+    }
+    if (btBiz) {
+      btBiz.style.border = isBusiness ? '1.4px solid #3BB77E' : '1.4px solid #e6eaee';
+      btBiz.style.background = isBusiness ? '#f0fdf4' : '#fff';
+      btBiz.style.color = isBusiness ? '#1f6b4d' : '#64748B';
+    }
+    if (gstinRow) gstinRow.style.display = isBusiness ? '' : 'none';
+    if (nameLabel) nameLabel.textContent = isBusiness ? 'Organisation name' : 'Full name';
+    if (nameInput) nameInput.placeholder = isBusiness ? 'e.g. Bright Future School' : 'e.g. Aarav Mehta';
+  };
+
+  // ── Sign In ──
+  window.handleSignIn = function(e) {
+    e.preventDefault();
+    const email = document.getElementById('signin-email').value.trim();
+    const namePart = email.split('@')[0].replace(/[._]/g, ' ');
+    const name = namePart.replace(/\b\w/g, c => c.toUpperCase());
+    NM.setUser({ name, email });
+    showToast('Welcome back, ' + name.split(' ')[0] + '!', 'success');
+    setTimeout(() => { window.location.href = '/account/dashboard'; }, 600);
+  };
+
+  // ── Register Step 1 ──
+  window.handleRegisterStep1 = function(e) {
+    e.preventDefault();
+    const termsChk = document.getElementById('reg-terms');
+    if (termsChk && !termsChk.checked) {
+      showToast('Please accept the Terms & Privacy Policy to continue.', 'error');
+      return;
+    }
+    const phone = document.getElementById('reg-phone').value.trim();
+    const hintEl = document.getElementById('otp-hint-text');
+    hintEl.textContent = 'Enter the 6-digit OTP sent to ' + phone + '.';
+
+    // Show Step 2
+    document.getElementById('register-step1').style.display = 'none';
+    document.getElementById('register-step2').classList.add('active');
+
+    // Pre-fill OTP boxes with 123456 after 1s (simulated delivery)
+    const boxes = document.querySelectorAll('.otp-box');
+    boxes.forEach(b => { b.value = ''; b.classList.remove('filled'); });
+    setTimeout(() => {
+      const digits = ['1','2','3','4','5','6'];
+      boxes.forEach((box, i) => {
+        box.value = digits[i];
+        box.classList.add('filled');
+      });
+    }, 1000);
+
+    // Wire up OTP box navigation
+    _initOTPBoxes();
+
+    // Focus first box
+    setTimeout(() => { boxes[0] && boxes[0].focus(); }, 50);
+  };
+
+  // ── OTP box navigation ──
+  function _initOTPBoxes() {
+    const boxes = document.querySelectorAll('.otp-box');
+    boxes.forEach((box, i) => {
+      box.addEventListener('input', function() {
+        // Only allow digits
+        this.value = this.value.replace(/\D/g, '').slice(-1);
+        this.classList.toggle('filled', this.value.length > 0);
+        if (this.value && i < boxes.length - 1) {
+          boxes[i + 1].focus();
+        }
+      });
+      box.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' && !this.value && i > 0) {
+          boxes[i - 1].focus();
+          boxes[i - 1].value = '';
+          boxes[i - 1].classList.remove('filled');
+        }
+      });
+      box.addEventListener('paste', function(e) {
+        e.preventDefault();
+        const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+        pasted.split('').forEach((ch, idx) => {
+          if (boxes[idx]) {
+            boxes[idx].value = ch;
+            boxes[idx].classList.add('filled');
+          }
+        });
+        const nextEmpty = [...boxes].find(b => !b.value);
+        if (nextEmpty) nextEmpty.focus();
+        else boxes[boxes.length - 1].focus();
+      });
+    });
+  }
+
+  // ── OTP Verify ──
+  window.handleOTPVerify = function() {
+    const boxes = document.querySelectorAll('#register-step2 .otp-box');
+    const otp = [...boxes].map(b => b.value).join('');
+    if (otp.length < 6) {
+      showToast('Please enter all 6 digits of the OTP.', 'error');
+      return;
+    }
+    const name = (document.getElementById('reg-name') || {}).value || 'Customer';
+    const email = (document.getElementById('reg-email') || {}).value || '';
+    NM.setUser({ name, email });
+    showToast('Account created! Welcome, ' + name.split(' ')[0] + '.', 'success');
+    setTimeout(() => { window.location.href = '/account/dashboard'; }, 700);
+  };
+
+  // ── Back to register step 1 ──
+  window.goBackToRegisterStep1 = function() {
+    document.getElementById('register-step2').classList.remove('active');
+    document.getElementById('register-step1').style.display = '';
+  };
+
+  // ── Redirect if already logged in ──
+  const existingUser = NM.getUser();
+  if (existingUser) {
+    if (NM.isAdmin()) {
+      window.location.href = '/admin/dashboard.html';
+    } else {
+      window.location.href = '/account/dashboard';
+    }
+  }
+
+  // ── Auto-fill demo credentials when coming from navbar Sign In button ──
+  if (new URLSearchParams(window.location.search).get('demo') === '1') {
+    const emailEl = document.getElementById('signin-email');
+    const passEl  = document.getElementById('signin-password');
+    if (emailEl) emailEl.value = 'ravi.mehta@example.com';
+    if (passEl)  passEl.value  = 'Demo@2024';
+  }
+})();
+</script>
+
+</body>
+</html>
