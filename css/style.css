@@ -413,6 +413,10 @@ select.form-control { cursor: pointer; }
   .countdown-item { min-width: 60px; padding: 12px; }
   .countdown-num { font-size: 26px; }
 }
+@media (max-width: 390px) {
+  .catbar-mobile-link { padding: 5px 10px; font-size: 12px; }
+  .catbar-mobile-nav { gap: 4px; }
+}
 
 
 /* ── Mobile Search Toggle & Overlay ── */
