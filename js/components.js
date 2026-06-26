@@ -112,9 +112,12 @@ function injectStorefrontShell() {
             <a href="/shop.html" class="catbar-item catbar-all">All Products</a>
             ${catBar}
           </div>
-          <div class="catbar-mobile-nav">
-            <button class="catbar-mobile-link" id="catbar-search-btn" type="button" title="Search">🔍</button>
-            ${navLinks.map(l => `<a href="${l.href}" class="catbar-mobile-link${path === l.match || (l.match !== '/' && path.startsWith(l.match)) ? ' active' : ''}">${l.label}</a>`).join('')}
+          <div class="catbar-persistent-search">
+            <div class="persistent-search-wrap">
+              <span class="persistent-search-icon">🔍</span>
+              <input type="text" id="persistent-search-input" placeholder="Search notebooks, pens, art supplies…" autocomplete="off">
+              <button class="persistent-search-btn" id="persistent-search-btn">Search</button>
+            </div>
           </div>
         </div>
       </div>
@@ -184,10 +187,28 @@ function injectStorefrontShell() {
       </footer>
     </div>`;
 
-  document.body.insertAdjacentHTML('beforeend', footer);
+  const mbnTabs = [
+    { href: '/',             match: '/',        icon: '🏠', label: 'Home'    },
+    { href: '/shop.html',    match: '/shop',    icon: '🛍', label: 'Shop'    },
+    { href: '/offers.html',  match: '/offers',  icon: '🏷', label: 'Offers'  },
+    { href: '/about.html',   match: '/about',   icon: 'ℹ', label: 'About'   },
+    { href: '/contact.html', match: '/contact', icon: '📞', label: 'Contact' }
+  ];
+  const mobileBottomNav = `<nav class="mobile-bottom-nav">
+    ${mbnTabs.map(function(t) {
+      var active = path === t.match || (t.match !== '/' && path.startsWith(t.match));
+      return '<a href="' + t.href + '" class="mbn-item' + (active ? ' active' : '') + '">' +
+        '<span class="mbn-icon">' + t.icon + '</span>' +
+        '<span class="mbn-label">' + t.label + '</span>' +
+      '</a>';
+    }).join('')}
+  </nav>`;
+
+  document.body.insertAdjacentHTML('beforeend', footer + mobileBottomNav);
 
   _initCartDrawer();
   _initNavbarSearch();
+  _initPersistentSearch();
   _updateCartBadge();
   document.addEventListener('nm:cartchange', _updateCartBadge);
 
@@ -222,14 +243,17 @@ function injectStorefrontShell() {
       }
     });
   }
-  // Catbar search pill — triggers the same mobile search overlay
-  var catbarSearchBtn = document.getElementById('catbar-search-btn');
-  if (catbarSearchBtn && mSearchBar) {
-    catbarSearchBtn.addEventListener('click', function() {
-      mSearchBar.classList.add('open');
-      if (mSearchInput) setTimeout(function() { mSearchInput.focus(); }, 50);
-    });
+}
+
+function _initPersistentSearch() {
+  var input = document.getElementById('persistent-search-input');
+  var btn   = document.getElementById('persistent-search-btn');
+  function go() {
+    var q = input && input.value.trim();
+    if (q) window.location.href = '/shop.html?q=' + encodeURIComponent(q);
   }
+  if (input) input.addEventListener('keydown', function(e) { if (e.key === 'Enter') go(); });
+  if (btn)   btn.addEventListener('click', go);
 }
 
 function _updateCartBadge() {
