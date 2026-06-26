@@ -402,6 +402,7 @@ select.form-control { cursor: pointer; }
   .admin-icon { display: inline !important; }
   .navbar-admin-btn .admin-label { display: none !important; }
   .navbar-admin-btn { padding: 0; width: 36px; height: 36px; justify-content: center; border-radius: 8px; font-size: 16px; }
+  .catbar::after { display: none; }
   .catbar-inner { display: none !important; }
   .catbar-persistent-search { display: block !important; padding: 8px 0; }
   .persistent-search-wrap { display: flex; align-items: center; position: relative; gap: 8px; }
