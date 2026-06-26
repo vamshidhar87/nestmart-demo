@@ -428,10 +428,6 @@ select.form-control { cursor: pointer; }
 }
 
 
-/* ── Mobile persistent search & bottom nav (hidden on desktop) ── */
-.catbar-persistent-search { display: none; }
-.mobile-bottom-nav { display: none; }
-
 /* ── Mobile Search Toggle & Overlay ── */
 .mobile-search-toggle { display: none; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 8px; border: none; background: var(--bg-hover); color: var(--text-muted); font-size: 18px; cursor: pointer; flex-shrink: 0; transition: background .15s; }
 .mobile-search-toggle:hover { background: var(--green-light); color: var(--green-dark); }
@@ -465,6 +461,8 @@ select.form-control { cursor: pointer; }
 .catbar-item:hover { color: var(--green-dark); background: var(--green-light); }
 .catbar-item.catbar-all { font-weight: 600; color: var(--text-dark); border-right: 1px solid var(--border-light); }
 .catbar-mobile-nav { display: none; align-items: center; gap: 6px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; white-space: nowrap; padding: 8px 0; }
+.catbar-persistent-search { display: none; }
+.mobile-bottom-nav { display: none; }
 .catbar-mobile-nav::-webkit-scrollbar { display: none; }
 .catbar-mobile-link { display: inline-flex; align-items: center; padding: 6px 14px; font-size: 13px; font-weight: 500; color: var(--text-dark); background: var(--bg-hover); border-radius: 20px; border: 1.5px solid var(--border-light); text-decoration: none; flex-shrink: 0; transition: background .15s, color .15s, border-color .15s; cursor: pointer; font-family: inherit; }
 .catbar-mobile-link:hover { background: var(--green-light); color: var(--green-dark); border-color: var(--green-mid); }
