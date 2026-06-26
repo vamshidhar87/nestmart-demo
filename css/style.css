@@ -396,7 +396,8 @@ select.form-control { cursor: pointer; }
   .navbar-inner { gap: 6px; }
   .navbar-icon-btn { width: 36px; height: 36px; font-size: 16px; }
   .navbar-user { padding: 5px 8px; gap: 5px; }
-  .nb-signin-icon { display: inline !important; font-size: 18px; }
+  .nb-signin-icon { display: inline-flex !important; align-items: center; justify-content: center; }
+  .nb-signin-icon svg { display: block; }
   .nb-signin-label { display: none !important; }
   .nb-signin-btn { padding: 0 !important; width: 36px !important; height: 36px !important; border-radius: 8px !important; font-size: 18px !important; gap: 0 !important; justify-content: center; }
   .admin-icon { display: inline !important; }

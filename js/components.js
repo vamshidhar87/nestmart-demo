@@ -94,7 +94,7 @@ function injectStorefrontShell() {
                      </div>
                    </div>`
                 : !user
-                  ? `<a href="/login?demo=1" class="btn btn-primary btn-sm nb-signin-btn" title="Sign In"><span class="nb-signin-icon">👤</span><span class="nb-signin-label"> Sign In</span></a>`
+                  ? `<a href="/login?demo=1" class="btn btn-primary btn-sm nb-signin-btn" title="Sign In"><span class="nb-signin-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="nb-signin-label"> Sign In</span></a>`
                   : ''
               }
               <a href="/admin/login" class="navbar-admin-btn" title="Admin Console"><span class="admin-icon">⚙ </span><span class="admin-label">Admin Login</span></a>
