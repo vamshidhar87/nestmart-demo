@@ -386,16 +386,50 @@ function injectAdminShell(activePage) {
       </div>
     </aside>`;
 
+  const userBtnInner = `
+    <div style="display:flex;flex-direction:column;align-items:flex-end;line-height:1.25;">
+      <span style="font-size:13px;font-weight:700;color:var(--text-dark);white-space:nowrap;">${adminName.split(' ')[0]}</span>
+      <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;text-transform:uppercase;letter-spacing:0.4px;">Admin</span>
+    </div>
+    <div class="admin-user-avatar">${adminInitials}</div>`;
+
   const topbar = `
     <div class="admin-content">
       <div class="admin-topbar">
-        <div style="display:flex;align-items:center;gap:8px">
-          <button class="admin-hamburger" id="admin-hamburger" title="Menu">☰</button>
-          <div style="font-family:var(--font-heading);font-size:15px;font-weight:600;color:var(--text-dark)" id="admin-page-title">Admin</div>
+        <div class="admin-tb-brand" style="align-items:center;padding:10px 16px;border-bottom:1px solid var(--border-light);width:100%;max-width:100vw;box-sizing:border-box;justify-content:space-between;">
+          <a href="/index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;min-width:0;overflow:hidden;">
+            ${_tvrLogoSVG(28)}
+            <div style="display:flex;flex-direction:column;min-width:0;overflow:hidden;">
+              <span style="font-family:var(--font-heading);font-size:13px;font-weight:700;color:var(--text-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Padmavathi Traders</span>
+              <span style="font-size:10px;color:var(--text-muted);font-weight:400;font-family:var(--font-body);margin-top:1px;letter-spacing:0.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Est. 1968 &middot; Stationery &amp; Art</span>
+            </div>
+          </a>
+          <div id="admin-user-btn-m" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-outer);flex-shrink:0;position:relative;user-select:none;color:var(--text-dark);">
+            ${userBtnInner}
+            <div class="admin-user-dropdown" id="admin-user-dropdown-m">
+              <div class="admin-dd-info">
+                <div style="font-weight:600;font-size:13px;color:var(--text-dark)">${adminName}</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${adminEmail}</div>
+              </div>
+              <button class="admin-dd-logout" onclick="NM.logout()">🚪 Sign Out</button>
+            </div>
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:12px">
-          <div style="font-size:13px;color:var(--text-muted)">${adminEmail}</div>
-          <div class="avatar" style="width:32px;height:32px;font-size:13px;background:var(--green-dark);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">${adminInitials}</div>
+        <div class="admin-tb-nav">
+          <div class="admin-tb-nav-left" style="flex:1;min-width:0;">
+            <button class="admin-hamburger" id="admin-hamburger" title="Menu">☰</button>
+            <div class="admin-topbar-title" id="admin-page-title">Admin</div>
+          </div>
+          <div class="admin-user-btn" id="admin-user-btn" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-outer);flex-shrink:0;position:relative;user-select:none;color:var(--text-dark);">
+            ${userBtnInner}
+            <div class="admin-user-dropdown" id="admin-user-dropdown">
+              <div class="admin-dd-info">
+                <div style="font-weight:600;font-size:13px;color:var(--text-dark)">${adminName}</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${adminEmail}</div>
+              </div>
+              <button class="admin-dd-logout" onclick="NM.logout()">🚪 Sign Out</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="admin-main" id="main-content">`;
@@ -418,4 +452,24 @@ function injectAdminShell(activePage) {
       adminOverlay.classList.remove('open');
     });
   }
+
+  function wireAdminBtn(btnId, ddId) {
+    var btn = document.getElementById(btnId);
+    var dd  = document.getElementById(ddId);
+    if (btn && dd) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        dd.classList.toggle('open');
+      });
+    }
+  }
+  wireAdminBtn('admin-user-btn', 'admin-user-dropdown');
+  wireAdminBtn('admin-user-btn-m', 'admin-user-dropdown-m');
+
+  document.addEventListener('click', function() {
+    var dd  = document.getElementById('admin-user-dropdown');
+    var ddm = document.getElementById('admin-user-dropdown-m');
+    if (dd)  dd.classList.remove('open');
+    if (ddm) ddm.classList.remove('open');
+  });
 }
