@@ -84,8 +84,26 @@
       padding: 40px 0;
     }
     @media (max-width: 768px) {
+      .about-hero { padding: 32px 0; }
       .about-hero-title { font-size: 26px; }
-      .contact-grid { grid-template-columns: 1fr; }
+      .about-hero-sub { font-size: 14px; }
+
+      /* Stats band: force 2-col, fix bleeding right border */
+      .about-stats { grid-template-columns: 1fr 1fr; }
+      .about-stat { padding: 16px 12px; }
+      .about-stat:nth-child(2n) { border-right: none; }
+      .about-stat:nth-child(n+3) { border-top: 1px solid var(--border-light); }
+      .about-stat-value { font-size: 24px; }
+
+      /* Story section: reduce top space */
+      .story-intro { padding-top: 24px !important; }
+
+      /* Contact grid: stack, reduce padding */
+      .contact-grid { grid-template-columns: 1fr; padding: 24px 0; }
+      .contact-form-card { padding: 20px; }
+
+      /* Form row: stack name+phone fields */
+      .form-two-col { grid-template-columns: 1fr !important; }
     }
     .contact-info-block {
       display: flex;
@@ -214,7 +232,7 @@
       </div>
 
       <!-- Story -->
-      <div class="container" style="padding:40px 0 0">
+      <div class="container story-intro" style="padding:40px 0 0">
         <div style="font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--green-mid);font-weight:700">Our story</div>
         <h2 style="font-family:var(--font-heading);font-size:28px;font-weight:800;color:var(--text-dark);margin:8px 0 14px;line-height:1.2;letter-spacing:-.01em">A neighbourhood shop that grew with the city</h2>
         <p style="font-size:14.5px;color:var(--text-muted);line-height:1.7;max-width:760px;margin-bottom:0">
@@ -284,7 +302,7 @@
             <p>For bulk enquiries, quotation requests, or any questions — fill this form and we'll respond within 1 business day.</p>
             <div id="contact-form-wrap">
               <form id="contact-form" novalidate>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+                <div class="form-two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
                   <div>
                     <label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:5px">Your name</label>
                     <input type="text" id="cf-name" placeholder="Full name" required

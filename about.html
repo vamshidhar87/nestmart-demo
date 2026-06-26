@@ -720,6 +720,48 @@
       .clients-grid { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
     }
+    @media (max-width: 768px) {
+      .about-hero { padding: 36px 0 28px; }
+      .about-hero h1 { font-size: 26px; }
+      .about-hero-sub { font-size: 14px; }
+
+      /* Stats: clean 2-column grid */
+      .about-hero-stats {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px 12px;
+        margin-top: 22px;
+        padding-top: 18px;
+        justify-content: unset;
+      }
+      .about-hero-stats > div { flex: none; text-align: left; }
+      .about-hero-stats > div:last-child { grid-column: 1 / -1; }
+      .hero-stat-value { font-size: 22px; }
+
+      /* Reduce section vertical padding */
+      .story-section  { padding: 36px 0 28px; }
+      .team-section   { padding: 36px 0; }
+      .clients-section { padding: 36px 0; }
+      .contact-section { padding: 36px 0 44px; }
+
+      /* Trust bar: 2-column grid, hide flex separators */
+      .clients-trust-bar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        padding: 18px 16px;
+      }
+      .trust-sep { display: none; }
+      .trust-item-value { font-size: 18px; }
+      .trust-item-label { font-size: 12px; }
+
+      /* Contact form in about page */
+      .contact-form-card { padding: 20px; }
+      .form-row { grid-template-columns: 1fr; }
+
+      /* Team card featured layout: stack on mobile */
+      .team-card.featured { flex-direction: column; gap: 14px; }
+    }
   </style>
 </head>
 <body>
