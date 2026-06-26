@@ -396,9 +396,9 @@ select.form-control { cursor: pointer; }
   .navbar-inner { gap: 6px; }
   .navbar-icon-btn { width: 36px; height: 36px; font-size: 16px; }
   .navbar-user { padding: 5px 8px; gap: 5px; }
-  .nb-signin-icon { display: none; }
-  .nb-signin-label { display: inline !important; margin-left: 0; }
-  .nb-signin-btn { padding: 5px 12px !important; width: auto !important; height: 32px !important; border-radius: 20px !important; font-size: 12px !important; font-weight: 600 !important; gap: 0 !important; }
+  .nb-signin-icon { display: inline !important; font-size: 18px; }
+  .nb-signin-label { display: none !important; }
+  .nb-signin-btn { padding: 0 !important; width: 36px !important; height: 36px !important; border-radius: 8px !important; font-size: 18px !important; gap: 0 !important; justify-content: center; }
   .admin-icon { display: inline !important; }
   .navbar-admin-btn .admin-label { display: none !important; }
   .navbar-admin-btn { padding: 0; width: 36px; height: 36px; justify-content: center; border-radius: 8px; font-size: 16px; }
