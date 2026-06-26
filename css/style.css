@@ -380,13 +380,15 @@ select.form-control { cursor: pointer; }
   .admin-content { margin-left: 0; }
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .products-grid { grid-template-columns: repeat(2, 1fr); }
-  .footer-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+  .footer-brand-col { grid-column: 1 / -1; }
+  .footer-bottom { flex-direction: column; gap: 6px; text-align: center; align-items: center; }
   .two-pane { grid-template-columns: 1fr; height: auto; }
   .media-grid { grid-template-columns: repeat(2, 1fr); }
   .navbar-links { display: none !important; }
   .navbar-search { display: none !important; }
-  .navbar-logo { gap: 8px; flex-shrink: 1; min-width: 0; overflow: hidden; }
-  .navbar-logo-text { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .navbar-logo { gap: 8px; flex-shrink: 1; min-width: 0; }
+  .navbar-logo-text { font-size: 13px; white-space: nowrap; }
   .navbar-logo-sub { font-size: 9px; white-space: nowrap; }
   .nb-user-name-label { display: none; }
   .mobile-search-toggle { display: none; }
@@ -397,9 +399,9 @@ select.form-control { cursor: pointer; }
   .nb-signin-icon { display: none; }
   .nb-signin-label { display: inline !important; margin-left: 0; }
   .nb-signin-btn { padding: 5px 12px !important; width: auto !important; height: 32px !important; border-radius: 20px !important; font-size: 12px !important; font-weight: 600 !important; gap: 0 !important; }
-  .admin-icon { display: none; }
-  .navbar-admin-btn .admin-label { display: inline !important; }
-  .navbar-admin-btn { padding: 5px 12px; width: auto; height: 32px; font-size: 12px; border-radius: 20px; }
+  .admin-icon { display: inline !important; }
+  .navbar-admin-btn .admin-label { display: none !important; }
+  .navbar-admin-btn { padding: 0; width: 36px; height: 36px; justify-content: center; border-radius: 8px; font-size: 16px; }
   .catbar-inner { display: none !important; }
   .catbar-mobile-nav { display: flex !important; }
   .catbar::after { display: none; }

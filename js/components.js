@@ -113,8 +113,8 @@ function injectStorefrontShell() {
             ${catBar}
           </div>
           <div class="catbar-mobile-nav">
-            ${navLinks.map(l => `<a href="${l.href}" class="catbar-mobile-link${path === l.match || (l.match !== '/' && path.startsWith(l.match)) ? ' active' : ''}">${l.label}</a>`).join('')}
             <button class="catbar-mobile-link" id="catbar-search-btn" type="button" title="Search">🔍</button>
+            ${navLinks.map(l => `<a href="${l.href}" class="catbar-mobile-link${path === l.match || (l.match !== '/' && path.startsWith(l.match)) ? ' active' : ''}">${l.label}</a>`).join('')}
           </div>
         </div>
       </div>
