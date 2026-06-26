@@ -416,7 +416,8 @@ select.form-control { cursor: pointer; }
   .mbn-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-muted); text-decoration: none; font-family: var(--font-body); padding: 6px 0; transition: color .15s; }
   .mbn-item.active { color: var(--green-dark); }
   .mbn-item:hover { color: var(--green-dark); }
-  .mbn-icon { font-size: 20px; line-height: 1; }
+  .mbn-icon { display: flex; align-items: center; justify-content: center; }
+  .mbn-icon svg { display: block; }
   .mbn-label { font-size: 10px; font-weight: 500; line-height: 1; }
   .storefront-wrap > main { padding-bottom: 58px; }
   .footer { padding-bottom: calc(58px + 24px); }

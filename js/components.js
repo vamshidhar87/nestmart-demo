@@ -187,12 +187,19 @@ function injectStorefrontShell() {
       </footer>
     </div>`;
 
+  var mbnSvg = {
+    home:    '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+    shop:    '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',
+    offers:  '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>',
+    about:   '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+    contact: '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.77 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>'
+  };
   const mbnTabs = [
-    { href: '/',             match: '/',        icon: '🏠', label: 'Home'    },
-    { href: '/shop.html',    match: '/shop',    icon: '🛍', label: 'Shop'    },
-    { href: '/offers.html',  match: '/offers',  icon: '🏷', label: 'Offers'  },
-    { href: '/about.html',   match: '/about',   icon: 'ℹ', label: 'About'   },
-    { href: '/contact.html', match: '/contact', icon: '📞', label: 'Contact' }
+    { href: '/',             match: '/',        icon: mbnSvg.home,    label: 'Home'    },
+    { href: '/shop.html',    match: '/shop',    icon: mbnSvg.shop,    label: 'Shop'    },
+    { href: '/offers.html',  match: '/offers',  icon: mbnSvg.offers,  label: 'Offers'  },
+    { href: '/about.html',   match: '/about',   icon: mbnSvg.about,   label: 'About'   },
+    { href: '/contact.html', match: '/contact', icon: mbnSvg.contact, label: 'Contact' }
   ];
   const mobileBottomNav = `<nav class="mobile-bottom-nav">
     ${mbnTabs.map(function(t) {
