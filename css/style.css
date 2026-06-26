@@ -403,7 +403,8 @@ select.form-control { cursor: pointer; }
   .navbar-admin-btn .admin-label { display: none !important; }
   .navbar-admin-btn { padding: 0; width: 36px; height: 36px; justify-content: center; border-radius: 8px; font-size: 16px; }
   .catbar-inner { display: none !important; }
-  .catbar-mobile-nav { display: flex !important; }
+  .catbar-mobile-nav { display: flex !important; gap: 4px; }
+  .catbar-mobile-link { padding: 5px 10px; font-size: 12px; }
   .catbar::after { display: none; }
 }
 @media (max-width: 480px) {
@@ -412,10 +413,6 @@ select.form-control { cursor: pointer; }
   .countdown-grid { gap: 8px; }
   .countdown-item { min-width: 60px; padding: 12px; }
   .countdown-num { font-size: 26px; }
-}
-@media (max-width: 390px) {
-  .catbar-mobile-link { padding: 5px 10px; font-size: 12px; }
-  .catbar-mobile-nav { gap: 4px; }
 }
 
 
